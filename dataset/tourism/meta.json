@@ -1,0 +1,10 @@
+{
+  "name": "tourism",
+  "freq": "MS",
+  "horizon_suggested": 24,
+  "n_series": 555,
+  "n_bottom": 304,
+  "data_files": [
+    "data.csv"
+  ]
+}

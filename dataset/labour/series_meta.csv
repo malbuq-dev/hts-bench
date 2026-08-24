@@ -1,0 +1,58 @@
+series_id,level,is_bottom,region,gender,employment
+s00000,Country,False,,,
+s00001,Country/Region,False,Australian Capital Territory,,
+s00002,Country/Region,False,New South Wales,,
+s00003,Country/Region,False,Northern Territory,,
+s00004,Country/Region,False,Queensland,,
+s00005,Country/Region,False,South Australia,,
+s00006,Country/Region,False,Tasmania,,
+s00007,Country/Region,False,Victoria,,
+s00008,Country/Region,False,Western Australia,,
+s00009,Country/Gender/Region,False,Australian Capital Territory,Females,
+s00010,Country/Gender/Region,False,Australian Capital Territory,Males,
+s00011,Country/Gender/Region,False,New South Wales,Females,
+s00012,Country/Gender/Region,False,New South Wales,Males,
+s00013,Country/Gender/Region,False,Northern Territory,Females,
+s00014,Country/Gender/Region,False,Northern Territory,Males,
+s00015,Country/Gender/Region,False,Queensland,Females,
+s00016,Country/Gender/Region,False,Queensland,Males,
+s00017,Country/Gender/Region,False,South Australia,Females,
+s00018,Country/Gender/Region,False,South Australia,Males,
+s00019,Country/Gender/Region,False,Tasmania,Females,
+s00020,Country/Gender/Region,False,Tasmania,Males,
+s00021,Country/Gender/Region,False,Victoria,Females,
+s00022,Country/Gender/Region,False,Victoria,Males,
+s00023,Country/Gender/Region,False,Western Australia,Females,
+s00024,Country/Gender/Region,False,Western Australia,Males,
+s00025,Country/Employment/Gender/Region,True,Australian Capital Territory,Females,Employed full-time
+s00026,Country/Employment/Gender/Region,True,Australian Capital Territory,Females,Employed part-time
+s00027,Country/Employment/Gender/Region,True,Australian Capital Territory,Males,Employed full-time
+s00028,Country/Employment/Gender/Region,True,Australian Capital Territory,Males,Employed part-time
+s00029,Country/Employment/Gender/Region,True,New South Wales,Females,Employed full-time
+s00030,Country/Employment/Gender/Region,True,New South Wales,Females,Employed part-time
+s00031,Country/Employment/Gender/Region,True,New South Wales,Males,Employed full-time
+s00032,Country/Employment/Gender/Region,True,New South Wales,Males,Employed part-time
+s00033,Country/Employment/Gender/Region,True,Northern Territory,Females,Employed full-time
+s00034,Country/Employment/Gender/Region,True,Northern Territory,Females,Employed part-time
+s00035,Country/Employment/Gender/Region,True,Northern Territory,Males,Employed full-time
+s00036,Country/Employment/Gender/Region,True,Northern Territory,Males,Employed part-time
+s00037,Country/Employment/Gender/Region,True,Queensland,Females,Employed full-time
+s00038,Country/Employment/Gender/Region,True,Queensland,Females,Employed part-time
+s00039,Country/Employment/Gender/Region,True,Queensland,Males,Employed full-time
+s00040,Country/Employment/Gender/Region,True,Queensland,Males,Employed part-time
+s00041,Country/Employment/Gender/Region,True,South Australia,Females,Employed full-time
+s00042,Country/Employment/Gender/Region,True,South Australia,Females,Employed part-time
+s00043,Country/Employment/Gender/Region,True,South Australia,Males,Employed full-time
+s00044,Country/Employment/Gender/Region,True,South Australia,Males,Employed part-time
+s00045,Country/Employment/Gender/Region,True,Tasmania,Females,Employed full-time
+s00046,Country/Employment/Gender/Region,True,Tasmania,Females,Employed part-time
+s00047,Country/Employment/Gender/Region,True,Tasmania,Males,Employed full-time
+s00048,Country/Employment/Gender/Region,True,Tasmania,Males,Employed part-time
+s00049,Country/Employment/Gender/Region,True,Victoria,Females,Employed full-time
+s00050,Country/Employment/Gender/Region,True,Victoria,Females,Employed part-time
+s00051,Country/Employment/Gender/Region,True,Victoria,Males,Employed full-time
+s00052,Country/Employment/Gender/Region,True,Victoria,Males,Employed part-time
+s00053,Country/Employment/Gender/Region,True,Western Australia,Females,Employed full-time
+s00054,Country/Employment/Gender/Region,True,Western Australia,Females,Employed part-time
+s00055,Country/Employment/Gender/Region,True,Western Australia,Males,Employed full-time
+s00056,Country/Employment/Gender/Region,True,Western Australia,Males,Employed part-time

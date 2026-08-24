@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+*.egg-info/
+_raw_cache/
+.pytest_cache/
+
+# M5's output is ~70MB of generated CSVs - regenerate with:
+#   python scripts/convert_m5.py [--store STORE_ID | --store all]
+dataset/m5/

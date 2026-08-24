@@ -1,0 +1,10 @@
+{
+  "name": "labour",
+  "freq": "MS",
+  "horizon_suggested": 8,
+  "n_series": 57,
+  "n_bottom": 32,
+  "data_files": [
+    "data.csv"
+  ]
+}
