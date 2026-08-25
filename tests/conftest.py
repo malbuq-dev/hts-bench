@@ -32,6 +32,18 @@ def toy_data():
 
 
 @pytest.fixture
+def periodic_series():
+    """A deterministic seasonal-plus-trend series, period=4, 48 points (12 cycles) -
+    long enough for statsmodels ETS/ARIMA to fit without convergence issues."""
+    period = 4
+    n = 48
+    pattern = [10.0, 20.0, 15.0, 25.0]
+    values = [pattern[i % period] + 0.1 * i for i in range(n)]
+    dates = pd.date_range("2020-01-01", periods=n, freq="D")
+    return pd.Series(values, index=dates)
+
+
+@pytest.fixture
 def crossed_series_meta():
     """
     Total
