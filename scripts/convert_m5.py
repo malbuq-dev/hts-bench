@@ -51,6 +51,12 @@ LEVELS = [
 
 def build_series_meta(cat: pd.DataFrame):
     bottom_cols = LEVELS[-1]
+    # Every dimension a bottom item genuinely has, not just the ones bottom_cols
+    # names (store_id, item_id): state_id/dept_id/cat_id are functionally
+    # determined by store_id/item_id, but bottom rows need them set explicitly
+    # too, or hierarchy.build_summing_matrix's per-level merge (e.g. on dept_id
+    # alone) matches zero bottom rows and that aggregate ends up all-zero.
+    all_dim_cols = sorted({c for cols in LEVELS for c in cols})
     series_rows = []
     unique_id_to_sid = {}
     next_idx = 0
@@ -58,6 +64,7 @@ def build_series_meta(cat: pd.DataFrame):
     for cols in LEVELS:
         level_name = "/".join(cols) if cols else "Total"
         is_bottom = cols == bottom_cols
+        row_cols = all_dim_cols if is_bottom else cols
         if not cols:
             # cat[[]].drop_duplicates() is a no-op on zero columns in this pandas
             # version (keeps every row instead of collapsing to one) - special-case
@@ -65,13 +72,13 @@ def build_series_meta(cat: pd.DataFrame):
             groups = pd.DataFrame([{}])
         else:
             extra = ["unique_id"] if is_bottom else []
-            groups = cat[cols + extra].drop_duplicates().reset_index(drop=True)
+            groups = cat[row_cols + extra].drop_duplicates().reset_index(drop=True)
 
         for _, vals in groups.iterrows():
             sid = f"s{next_idx:05d}"
             next_idx += 1
             row = {"series_id": sid, "level": level_name, "is_bottom": is_bottom}
-            row.update({c: vals[c] for c in cols})
+            row.update({c: vals[c] for c in row_cols})
             series_rows.append(row)
             if is_bottom:
                 unique_id_to_sid[vals["unique_id"]] = sid
