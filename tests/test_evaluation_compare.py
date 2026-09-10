@@ -4,7 +4,7 @@ import pytest
 
 from hts_bench.data.loader import load_dataset
 from hts_bench.evaluation.compare import compare_methods, compare_methods_rolling
-from hts_bench.evaluation.reconcile import bottom_up, top_down
+from hts_bench.evaluation.reconcile import bottom_up, min_trace, top_down
 from hts_bench.method.naive import Naive, SeasonalNaive
 
 
@@ -68,3 +68,30 @@ def test_compare_methods_rolling_runs_end_to_end_on_real_datasets(name):
     assert len(result) == 2 * n_origins * len(ds.summing_matrix.row_ids)
     assert result.index.get_level_values("origin").nunique() == n_origins
     assert not result[["mae", "rmse"]].isna().to_numpy().any()
+
+
+def test_compare_methods_series_ids_enables_min_trace(toy_ds):
+    # Without series_ids=row_ids, run_forecast only produces bottom-level
+    # forecasts and min_trace rejects them outright (see its docstring) -
+    # this was a real gap: compare_methods couldn't use min_trace at all
+    # before series_ids existed.
+    result = compare_methods(
+        toy_ds,
+        {"Naive": Naive},
+        horizon=1,
+        reconcile_fn=min_trace,
+        series_ids=toy_ds.summing_matrix.row_ids,
+    )
+    assert set(result.index.get_level_values("series_id")) == {"s0", "s1", "s2"}
+
+
+def test_compare_methods_rolling_series_ids_enables_min_trace(toy_ds):
+    result = compare_methods_rolling(
+        toy_ds,
+        {"Naive": Naive},
+        horizon=1,
+        n_origins=1,
+        reconcile_fn=min_trace,
+        series_ids=toy_ds.summing_matrix.row_ids,
+    )
+    assert set(result.index.get_level_values("series_id")) == {"s0", "s1", "s2"}

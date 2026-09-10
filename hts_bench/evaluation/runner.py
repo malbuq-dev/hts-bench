@@ -63,6 +63,7 @@ def evaluate_rolling(
     n_origins: int = 5,
     metric_names: List[str] = ("mae", "rmse", "mase"),
     reconcile_fn: Optional[Callable[[HierarchicalDataset, pd.DataFrame], pd.DataFrame]] = None,
+    series_ids: Optional[List[str]] = None,
 ) -> pd.DataFrame:
     """
     Repeats the single-split run_forecast -> evaluate cycle at n_origins cutoffs,
@@ -85,6 +86,12 @@ def evaluate_rolling(
     HierarchicalDataset with `data` truncated to that origin's cutoff (same
     series_meta, so the same hierarchy) - not a change to run_forecast itself,
     which stays a single fixed split.
+
+    series_ids is forwarded to every origin's run_forecast call unchanged
+    (default: bottom-only) - the same set of series_ids is valid at every
+    origin, since it's derived from series_meta, not from how much data is
+    truncated. Pass ds.summing_matrix.row_ids when `reconcile_fn` is
+    min_trace/min_trace_shrink, same as compare_methods.
     """
     if n_origins * horizon >= len(ds.data):
         raise ValueError(
@@ -99,7 +106,7 @@ def evaluate_rolling(
             name=ds.name, freq=ds.freq, data=ds.data.iloc[:cutoff], series_meta=ds.series_meta
         )
 
-        forecasts = run_forecast(origin_ds, method_factory, horizon)
+        forecasts = run_forecast(origin_ds, method_factory, horizon, series_ids=series_ids)
         result = evaluate(
             origin_ds, forecasts, horizon, metric_names=metric_names, reconcile_fn=reconcile_fn
         )

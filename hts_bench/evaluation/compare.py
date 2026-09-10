@@ -15,6 +15,7 @@ def compare_methods(
     horizon: int,
     metric_names: List[str] = ("mae", "rmse", "mase"),
     reconcile_fn: Optional[Callable[[HierarchicalDataset, pd.DataFrame], pd.DataFrame]] = None,
+    series_ids: Optional[List[str]] = None,
 ) -> pd.DataFrame:
     """
     Runs every method in `method_factories` through run_forecast -> evaluate and
@@ -29,11 +30,16 @@ def compare_methods(
     any one method, so comparing methods under a fixed reconciliation choice is
     the meaningful comparison; to compare reconciliation choices instead, call
     this once per reconcile_fn and compare the resulting tables.
+
+    series_ids is forwarded to run_forecast (default: bottom-only). Pass
+    ds.summing_matrix.row_ids when `reconcile_fn` is min_trace/min_trace_shrink
+    - those need every level forecast independently, not just the bottom (see
+    min_trace's docstring); bottom_up/top_down only ever need the default.
     """
     reconcile_fn = reconcile_fn or bottom_up
     results = []
     for method_name, factory in method_factories.items():
-        forecasts = run_forecast(ds, method_factory=factory, horizon=horizon)
+        forecasts = run_forecast(ds, method_factory=factory, horizon=horizon, series_ids=series_ids)
         result = evaluate(
             ds, forecasts, horizon=horizon, metric_names=metric_names, reconcile_fn=reconcile_fn
         )
@@ -51,12 +57,15 @@ def compare_methods_rolling(
     n_origins: int = 5,
     metric_names: List[str] = ("mae", "rmse", "mase"),
     reconcile_fn: Optional[Callable[[HierarchicalDataset, pd.DataFrame], pd.DataFrame]] = None,
+    series_ids: Optional[List[str]] = None,
 ) -> pd.DataFrame:
     """
     compare_methods's rolling-origin counterpart: runs every method through
     evaluate_rolling instead of evaluate, and stacks the results into one table
     indexed by (method, origin, series_id) - see evaluate_rolling's docstring
     for why a single fixed split isn't enough on its own.
+
+    series_ids: see compare_methods - same forwarding, same reason.
     """
     reconcile_fn = reconcile_fn or bottom_up
     results = []
@@ -68,6 +77,7 @@ def compare_methods_rolling(
             n_origins=n_origins,
             metric_names=metric_names,
             reconcile_fn=reconcile_fn,
+            series_ids=series_ids,
         )
         result = result.reset_index()
         result.insert(0, "method", method_name)
