@@ -1,3 +1,4 @@
+import time
 from typing import Callable, Dict, List, Optional
 
 import pandas as pd
@@ -20,7 +21,7 @@ def evaluate(
     """
     Scores forecasts against actuals for every series in the hierarchy, one row
     per series indexed by series_id, columns = level + each requested metric
-    (+ time_seconds, when `times` is given).
+    (+ time_seconds, when `times` is given) + reconcile_seconds.
 
     Mirrors TFB's Evaluator/FixedForecast split (ts_benchmark/evaluation/
     evaluator.py, .../strategy/fixed_forecast.py): metrics are pure functions
@@ -49,9 +50,22 @@ def evaluate(
     bottom-only run) has no entry, so it gets NaN - same convention
     metrics.mase already uses for its own undefined case, and aggregation
     (report/leaderboard.py) already skips NaNs the same way.
+
+    reconcile_seconds: how long the reconcile_fn(ds, forecasts) call itself
+    took, attached identically to every row - reconciliation is one operation
+    over the whole hierarchy's worth of forecasts at once, not a per-series
+    thing the way fitting is, so there's no finer-grained number to report
+    per series. Unlike time_seconds this is always present, since reconcile_fn
+    is always called here regardless of `times`. For min_trace_shrink
+    specifically, this only covers the reconcile_fn's own (S'W^-1S)^-1 S'W^-1
+    solve, not the separate, often-larger cost of estimating W in the first
+    place - see reconciliation/reconcile.py's min_trace_shrink docstring for
+    why that's reported separately rather than folded in here.
     """
     reconcile_fn = reconcile_fn or bottom_up
+    reconcile_start = time.perf_counter()
     reconciled = reconcile_fn(ds, forecasts)
+    reconcile_seconds = time.perf_counter() - reconcile_start
 
     actuals = ds.data.loc[reconciled.index, reconciled.columns]
     hist = ds.data.iloc[:-horizon]
@@ -66,11 +80,12 @@ def evaluate(
         predicted = reconciled[series_id].to_numpy(dtype=float)
         hist_data = hist[series_id].to_numpy(dtype=float)
         for name in metric_names:
-            if name == "time_seconds":
-                continue  # not in METRICS - attached below from `times` instead
+            if name in ("time_seconds", "reconcile_seconds"):
+                continue  # not in METRICS - attached separately below
             row[name] = METRICS[name](actual, predicted, hist_data=hist_data)
         if times is not None:
             row["time_seconds"] = times.get(series_id, float("nan"))
+        row["reconcile_seconds"] = reconcile_seconds
         rows.append(row)
 
     return pd.DataFrame(rows).set_index("series_id")

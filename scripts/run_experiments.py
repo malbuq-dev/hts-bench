@@ -51,7 +51,14 @@ def main():
         for reconcile_name in reconcile_names:
             start = time.time()
             if reconcile_name == "min_trace_shrink":
-                reconcile_fn = min_trace_shrink(ds, lambda: ETS(seasonal_period=seasonal_period), horizon)
+                reconcile_fn, setup_seconds = min_trace_shrink(
+                    ds, lambda: ETS(seasonal_period=seasonal_period), horizon
+                )
+                # Setup cost is shared across every method run_benchmark loops over
+                # below, not a per-method quantity - reported once here rather than
+                # folded into the per-method results table (see min_trace_shrink's
+                # docstring and evaluate()'s reconcile_seconds for why).
+                print(f"[{dataset_name}/{reconcile_name}] covariance setup: {setup_seconds:.2f}s")
             else:
                 reconcile_fn = PLAIN_RECONCILE_CHOICES[reconcile_name]
 

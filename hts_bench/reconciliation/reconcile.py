@@ -1,5 +1,6 @@
 import functools
-from typing import Callable, Optional
+import time
+from typing import Callable, Optional, Tuple
 
 import numpy as np
 import pandas as pd
@@ -181,7 +182,7 @@ def shrinkage_covariance(residuals: pd.DataFrame) -> np.ndarray:
 
 def min_trace_shrink(
     ds: HierarchicalDataset, method_factory: Callable[[], MethodBase], horizon: int
-) -> Callable[[HierarchicalDataset, pd.DataFrame], pd.DataFrame]:
+) -> Tuple[Callable[[HierarchicalDataset, pd.DataFrame], pd.DataFrame], float]:
     """
     Builds a ready-to-use reconcile_fn for MinT(shrink) - the actual MinT most
     of the literature means by that name, using shrinkage_covariance's
@@ -194,7 +195,7 @@ def min_trace_shrink(
     forecasts being reconciled. Call this once to get a plain reconcile_fn,
     then use it like bottom_up/top_down/min_trace everywhere else:
 
-        reconcile_fn = min_trace_shrink(ds, lambda: ETS(seasonal_period=12), horizon)
+        reconcile_fn, setup_seconds = min_trace_shrink(ds, lambda: ETS(seasonal_period=12), horizon)
         forecasts, times = run_forecast(ds, method_factory, horizon, series_ids=ds.summing_matrix.row_ids)
         evaluate(ds, forecasts, horizon, reconcile_fn=reconcile_fn, times=times)
 
@@ -202,7 +203,20 @@ def min_trace_shrink(
     (Naive, SeasonalNaive, ETS, ARIMA, LightGBM - not Theta, see
     statsmodels_adapter.py) - it's the model used to estimate residuals at
     every level, not necessarily the same method being scored.
+
+    Returns (reconcile_fn, setup_seconds): setup_seconds times compute_residuals
+    + shrinkage_covariance - the cost of building W, done once here rather than
+    inside reconcile_fn (which just does min_trace's usual (S'W^-1S)^-1 S'W^-1
+    solve - see min_trace's own per-call cost, captured separately by
+    evaluate()'s reconcile_seconds). This setup cost is typically the larger of
+    the two, and - unlike reconcile_seconds - isn't a per-method quantity: a
+    caller sweeping several methods under the same min_trace_shrink builds it
+    once and reuses the same reconcile_fn for all of them (see
+    scripts/run_experiments.py), so attributing it to any one method would be
+    misleading. Report it separately instead of folding it into a per-method
+    results table.
     """
+    start = time.perf_counter()
     residuals = compute_residuals(ds, method_factory, horizon, series_ids=ds.summing_matrix.row_ids)
     common = residuals.dropna()
     if len(common) < 2:
@@ -212,4 +226,5 @@ def min_trace_shrink(
         )
 
     W = shrinkage_covariance(common[ds.summing_matrix.row_ids])
-    return functools.partial(min_trace, W=W)
+    setup_seconds = time.perf_counter() - start
+    return functools.partial(min_trace, W=W), setup_seconds

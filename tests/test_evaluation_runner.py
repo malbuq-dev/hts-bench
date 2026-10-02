@@ -26,8 +26,11 @@ def test_evaluate_scores_every_series_in_the_hierarchy(toy_ds, toy_forecasts):
     result = evaluate(toy_ds, toy_forecasts, horizon=1)
 
     assert set(result.index) == {"s0", "s1", "s2"}
-    assert list(result.columns) == ["level", "mae", "rmse", "mase"]
+    assert list(result.columns) == ["level", "mae", "rmse", "mase", "reconcile_seconds"]
     assert not result[["mae", "rmse"]].isna().to_numpy().any()
+    # One reconcile_fn(ds, forecasts) call for the whole table - same value everywhere.
+    assert result["reconcile_seconds"].nunique() == 1
+    assert (result["reconcile_seconds"] >= 0).all()
 
 
 def test_evaluate_adds_time_seconds_when_times_given(toy_ds, toy_forecasts):
@@ -35,7 +38,7 @@ def test_evaluate_adds_time_seconds_when_times_given(toy_ds, toy_forecasts):
 
     result = evaluate(toy_ds, toy_forecasts, horizon=1, times=times)
 
-    assert list(result.columns) == ["level", "mae", "rmse", "mase", "time_seconds"]
+    assert list(result.columns) == ["level", "mae", "rmse", "mase", "time_seconds", "reconcile_seconds"]
     assert result.loc["s1", "time_seconds"] == pytest.approx(0.01)
     assert result.loc["s2", "time_seconds"] == pytest.approx(0.02)
     assert np.isnan(result.loc["s0", "time_seconds"])  # reconciled, not fit - see docstring

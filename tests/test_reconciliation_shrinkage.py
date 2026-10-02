@@ -66,8 +66,14 @@ def test_min_trace_shrink_raises_with_too_little_history(write_dataset, toy_seri
         min_trace_shrink(ds, Naive, horizon=1)
 
 
+def test_min_trace_shrink_returns_a_nonnegative_setup_time(toy_ds_long):
+    _, setup_seconds = min_trace_shrink(toy_ds_long, Naive, horizon=2)
+
+    assert setup_seconds >= 0
+
+
 def test_min_trace_shrink_reconciles_disagreeing_levels_coherently(toy_ds_long):
-    reconcile_fn = min_trace_shrink(toy_ds_long, Naive, horizon=2)
+    reconcile_fn, _ = min_trace_shrink(toy_ds_long, Naive, horizon=2)
 
     incoherent = pd.DataFrame(
         {"s0": [100.0], "s1": [60.0], "s2": [20.0]}, index=toy_ds_long.data.index[-1:]
@@ -92,7 +98,7 @@ def test_min_trace_shrink_is_coherent_on_real_datasets(name):
     from hts_bench.method.runner import run_forecast
 
     forecasts, _ = run_forecast(ds, method_factory, horizon, series_ids=ds.summing_matrix.row_ids)
-    reconcile_fn = min_trace_shrink(ds, method_factory, horizon)
+    reconcile_fn, _ = min_trace_shrink(ds, method_factory, horizon)
 
     reconciled = reconcile_fn(ds, forecasts)
 
