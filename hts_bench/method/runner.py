@@ -33,7 +33,7 @@ def run_forecast(
     genuinely independent base forecasts at more than one level to have
     anything to reconcile. If every non-bottom "forecast" is instead just S @ b̂
     derived from bottom forecasts, those methods collapse to bottom_up exactly
-    - see evaluation/reconcile.py's min_trace docstring for why.
+    - see reconciliation/reconcile.py's min_trace docstring for why.
     """
     series_ids = series_ids if series_ids is not None else ds.bottom_series
     train = ds.data.iloc[:-horizon]
@@ -64,7 +64,7 @@ def compute_residuals(
     raises NotImplementedError there (e.g. Theta - see statsmodels_adapter.py).
 
     The only consumer of this is MinT(shrink)'s covariance estimate
-    (evaluation/reconcile.py's shrinkage_covariance) - nothing else in this
+    (reconciliation/reconcile.py's shrinkage_covariance) - nothing else in this
     codebase needs in-sample fit, only forecasts.
     """
     series_ids = series_ids if series_ids is not None else ds.bottom_series

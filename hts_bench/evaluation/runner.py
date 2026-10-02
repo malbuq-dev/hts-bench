@@ -4,7 +4,7 @@ import pandas as pd
 
 from hts_bench.data.dataset import HierarchicalDataset
 from hts_bench.evaluation.metrics import METRICS
-from hts_bench.evaluation.reconcile import bottom_up
+from hts_bench.reconciliation.reconcile import bottom_up
 from hts_bench.method.base import MethodBase
 from hts_bench.method.runner import run_forecast
 

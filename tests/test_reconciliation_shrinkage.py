@@ -5,7 +5,7 @@ import pandas as pd
 import pytest
 
 from hts_bench.data.loader import aggregate_from_bottom, load_dataset
-from hts_bench.evaluation.reconcile import min_trace_shrink, shrinkage_covariance
+from hts_bench.reconciliation.reconcile import min_trace_shrink, shrinkage_covariance
 from hts_bench.method.naive import Naive
 from hts_bench.method.statsmodels_adapter import ETS
 

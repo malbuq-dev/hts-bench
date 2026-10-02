@@ -5,7 +5,7 @@ import pandas as pd
 import pytest
 
 from hts_bench.data.loader import load_dataset
-from hts_bench.evaluation.reconcile import bottom_up, top_down
+from hts_bench.reconciliation.reconcile import bottom_up, top_down
 from hts_bench.evaluation.runner import evaluate, evaluate_rolling
 from hts_bench.method.naive import Naive, SeasonalNaive
 from hts_bench.method.runner import run_forecast

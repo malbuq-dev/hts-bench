@@ -26,7 +26,7 @@ def run_benchmark(
     """
     One call end to end: load_dataset -> compare_methods(_rolling) -> leaderboard
     - the chain every experiment in this project has been assembling by hand.
-    Wires Data/Method/Evaluation/Report together the way TFB's own top-level
+    Wires Data/Method/Reconciliation/Evaluation/Report together the way TFB's own top-level
     pipeline.pipeline() does, minus TFB's config-file/parallel-scheduling layer
     around it: this project's whole benchmark loop runs comfortably in-process,
     so there's nothing to schedule.

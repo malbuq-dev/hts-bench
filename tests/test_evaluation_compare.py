@@ -4,7 +4,7 @@ import pytest
 
 from hts_bench.data.loader import load_dataset
 from hts_bench.evaluation.compare import compare_methods, compare_methods_rolling
-from hts_bench.evaluation.reconcile import bottom_up, min_trace, top_down
+from hts_bench.reconciliation.reconcile import bottom_up, min_trace, top_down
 from hts_bench.method.naive import Naive, SeasonalNaive
 
 

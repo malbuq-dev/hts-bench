@@ -7,7 +7,7 @@ PROJECT_ROOT = os.path.dirname(SCRIPT_DIR)
 sys.path.insert(0, PROJECT_ROOT)
 
 from hts_bench.data.loader import load_dataset 
-from hts_bench.evaluation.reconcile import bottom_up, min_trace, min_trace_shrink, top_down
+from hts_bench.reconciliation.reconcile import bottom_up, min_trace, min_trace_shrink, top_down
 from hts_bench.method.lgbm_adapter import LGBMAdapter 
 from hts_bench.method.naive import Naive, SeasonalNaive
 from hts_bench.method.statsmodels_adapter import ARIMA, ETS, Theta

@@ -11,7 +11,7 @@
 
 </div>
 
-> Projeto desenvolvido como Trabalho de Conclusão de Curso (TCC). A estrutura geral deste README — e, em maior escala, a separação em módulos Dados/Métodos/Avaliação/Relatórios do próprio código — foi inspirada no [TFB (Time Series Forecasting Benchmark)](https://github.com/decisionintelligence/TFB), referenciado ao longo do código-fonte sempre que uma escolha de design parte de um padrão seu. Veja [Reconhecimentos](#reconhecimentos).
+> Projeto desenvolvido como Trabalho de Conclusão de Curso (TCC). A estrutura geral deste README — e, em maior escala, a separação em módulos Dados/Métodos/Reconciliação/Avaliação/Relatórios do próprio código — foi inspirada no [TFB (Time Series Forecasting Benchmark)](https://github.com/decisionintelligence/TFB), referenciado ao longo do código-fonte sempre que uma escolha de design parte de um padrão seu. Veja [Reconhecimentos](#reconhecimentos).
 
 ## Sumário
 
@@ -34,7 +34,7 @@
 
 HTSBench avalia, de ponta a ponta, métodos de previsão sobre séries temporais que possuem uma **hierarquia**: séries de nível mais baixo (ex.: vendas por loja) que se somam em séries agregadas (ex.: vendas por estado, vendas totais). A plataforma roda cada método de forma independente por série, aplica uma estratégia de **reconciliação** para tornar o conjunto de previsões coerente com a hierarquia (a soma das partes bater com o todo) e calcula métricas de erro comparáveis entre métodos e datasets.
 
-A figura abaixo resume o fluxo: os quatro componentes à esquerda (Dados, Métodos, Avaliação, Relatórios) e a sequência de execução que eles implementam à direita.
+A figura abaixo resume o fluxo: os cinco componentes à esquerda (Dados, Métodos, Reconciliação, Avaliação, Relatórios) e a sequência de execução que eles implementam à direita.
 
 <div align="center">
 <img alt="Pipeline do HTSBench" src="docs/figures/pipeline.png" width="85%"/>
@@ -43,7 +43,8 @@ A figura abaixo resume o fluxo: os quatro componentes à esquerda (Dados, Métod
 Em linhas gerais:
 - **Dados** carrega um dataset hierárquico (`dataset/<nome>/`) e deriva a matriz de somação S que descreve a hierarquia a partir de `series_meta.csv` — nenhuma hierarquia é codificada à mão em nenhum outro lugar do código.
 - **Métodos** implementam uma interface única e univariada (`MethodBase`); cada método é ajustado e previsto série por série, sem nunca enxergar a hierarquia.
-- **Avaliação** junta as previsões de todas as séries, aplica a reconciliação escolhida e calcula as métricas, com suporte a avaliação de origem única ou de múltiplas origens (*rolling-origin*).
+- **Reconciliação** recebe as previsões brutas de todas as séries e produz um conjunto coerente com a matriz S (a soma das partes bate com o todo), por uma entre quatro estratégias (`bottom_up`, `top_down`, `min_trace`, `min_trace_shrink`).
+- **Avaliação** orquestra a previsão série a série, aplica a estratégia de reconciliação escolhida e calcula as métricas, com suporte a avaliação de origem única ou de múltiplas origens (*rolling-origin*).
 - **Relatórios** agrega o resultado por série em uma tabela única por método (um *leaderboard*) e pode persistir tanto o leaderboard quanto a tabela bruta por série para reprocessamento posterior sem reexecutar nenhum modelo.
 
 ## Datasets
@@ -62,7 +63,7 @@ Cada dataset é um diretório `dataset/<nome>/` com três arquivos: `data.csv` (
 
 ## Métodos de previsão
 
-Todo método implementa a interface `MethodBase` (`hts_bench/method/base.py`): univariado, agnóstico à hierarquia — recebe uma série, devolve uma previsão. Reconciliação é responsabilidade da camada de Avaliação, não do método.
+Todo método implementa a interface `MethodBase` (`hts_bench/method/base.py`): univariado, agnóstico à hierarquia — recebe uma série, devolve uma previsão. Reconciliação é responsabilidade do módulo de Reconciliação, não do método.
 
 | Método | Descrição | Biblioteca |
 |---|---|---|
@@ -192,11 +193,12 @@ Cobre dados (carregamento, matriz de somação, verificação de coerência), m�
 
 ```
 hts_bench/
-  data/        # carregamento de dataset, matriz de somação S, checagem de coerência
-  method/      # interface MethodBase + adaptadores (naive, statsmodels, lightgbm)
-  evaluation/  # execução de previsão, reconciliação, métricas, comparação entre métodos
-  report/      # persistência de resultados brutos e agregação em leaderboard
-  pipeline.py  # liga os quatro módulos acima em uma única chamada
+  data/           # carregamento de dataset, matriz de somação S, checagem de coerência
+  method/         # interface MethodBase + adaptadores (naive, statsmodels, lightgbm)
+  reconciliation/ # estratégias de reconciliação hierárquica (bottom_up, top_down, min_trace, min_trace_shrink)
+  evaluation/     # execução de previsão, aplicação da reconciliação, métricas, comparação entre métodos
+  report/         # persistência de resultados brutos e agregação em leaderboard
+  pipeline.py     # liga os cinco módulos acima em uma única chamada
 
 scripts/
   convert_*.py            # conversão de cada dataset para o formato do projeto
@@ -211,7 +213,7 @@ notebooks/  # material de apoio para construir intuição sobre a hierarquia
 
 ## Reconhecimentos
 
-A separação em módulos (Dados, Métodos, Avaliação, Relatórios), a interface padronizada de método e o padrão de persistência de resultados brutos para reprocessamento posterior foram inspirados no [TFB](https://github.com/decisionintelligence/TFB):
+A separação em módulos (Dados, Métodos, Reconciliação, Avaliação, Relatórios), a interface padronizada de método e o padrão de persistência de resultados brutos para reprocessamento posterior foram inspirados no [TFB](https://github.com/decisionintelligence/TFB):
 
 ```
 @article{qiu2024tfb,

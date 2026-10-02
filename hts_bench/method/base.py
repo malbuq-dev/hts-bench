@@ -49,7 +49,7 @@ class MethodBase(abc.ABC):
 
         Optional, unlike forecast_fit/forecast: only needed by reconciliation
         methods that estimate a residual covariance (MinT(shrink) - see
-        evaluation/reconcile.py's shrinkage_covariance). Not every method can
+        reconciliation/reconcile.py's shrinkage_covariance). Not every method can
         support it cleanly (e.g. Theta, whose statsmodels result has no
         fitted-values concept) - raise NotImplementedError rather than fake it.
         """

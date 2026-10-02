@@ -4,7 +4,7 @@ import pandas as pd
 import pytest
 
 from hts_bench.data.loader import aggregate_from_bottom, load_dataset
-from hts_bench.evaluation.reconcile import bottom_up, min_trace, top_down
+from hts_bench.reconciliation.reconcile import bottom_up, min_trace, top_down
 from hts_bench.method.runner import run_forecast
 from hts_bench.method.statsmodels_adapter import ETS
 
