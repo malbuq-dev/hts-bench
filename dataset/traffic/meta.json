@@ -1,0 +1,10 @@
+{
+  "name": "traffic",
+  "freq": "D",
+  "horizon_suggested": 1,
+  "n_series": 207,
+  "n_bottom": 200,
+  "data_files": [
+    "data.csv"
+  ]
+}

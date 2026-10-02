@@ -1,0 +1,10 @@
+{
+  "name": "wiki2",
+  "freq": "D",
+  "horizon_suggested": 1,
+  "n_series": 199,
+  "n_bottom": 150,
+  "data_files": [
+    "data.csv"
+  ]
+}
