@@ -1,11 +1,17 @@
 __pycache__/
 *.pyc
 .venv/
+.venv*/
 venv/
 *.egg-info/
 _raw_cache/
 .pytest_cache/
+.ipynb_checkpoints/
 
 # M5's output is ~70MB of generated CSVs - regenerate with:
 #   python scripts/convert_m5.py [--store STORE_ID | --store all]
 dataset/m5/
+
+# run_benchmark(records_dir=...) output - regenerate by re-running experiments,
+# or re-aggregate what's already here into a leaderboard via report.report()
+result/

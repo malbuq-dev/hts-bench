@@ -1,2 +1,10 @@
 -r requirements.txt
-pytest>=8.0
+pytest==9.1.1
+ipykernel==7.4.0
+# Only used by scripts/convert_*.py (Labour/Tourism/Traffic/Wiki2/M5 conversion)
+# and their tests - never a runtime dependency of hts_bench itself. The reason
+# requirements.txt pins pandas<3.0 (==2.3.3) instead of a newer 3.x release:
+# datasetsforecast requires pandas<3.0.0, and this file must resolve alongside
+# requirements.txt in one `pip install` - verified as a single unified resolve,
+# not two separate installs (that's what originally hid this conflict).
+datasetsforecast==1.0.1
