@@ -2,8 +2,10 @@
 Reads back everything scripts/run_experiments.py saved to result/ (no
 re-fitting) and produces the comparison views discussed for the results
 chapter: method x domain, reconciliation comparison, reconciliation benefit by
-hierarchy depth, and hierarchy-type grouping. Run this as many times as you
-like, with different slicing, without ever re-running a model.
+hierarchy depth, hierarchy-type grouping, and (views 5-8) the same
+cost/domain/structure breakdowns for time_seconds/reconcile_seconds instead of
+mase. Run this as many times as you like, with different slicing, without
+ever re-running a model.
 """
 import os
 import sys
@@ -100,6 +102,38 @@ def main():
     dataset_means["hierarchy_type"] = dataset_means["dataset"].map(HIERARCHY_TYPE)
     lift = dataset_means.groupby(["hierarchy_type", "reconcile"])["mase"].mean().unstack("reconcile")
     print(lift.round(3))
+
+    print("\n=== 5. Method cost by domain (Bottom-Up, mean time_seconds per dataset) ===")
+    # Same bottom_up filter as view 1, for the same reason: holding the
+    # reconciliation strategy fixed isolates "which method is slow to fit" from
+    # the series-count confound in view 8 below (bottom_up always fits exactly
+    # the bottom series, same set for every method).
+    print(bu.groupby(["dataset", "method"])["time_seconds"].mean().unstack("method").round(4))
+
+    print("\n=== 6. Reconciliation cost by domain (mean reconcile_seconds per dataset) ===")
+    print(records.groupby(["dataset", "reconcile"])["reconcile_seconds"].mean().unstack("reconcile").round(4))
+    print(
+        "(min_trace_shrink's covariance setup cost isn't included here - it's a one-time "
+        "cost shared across every method, not a per-method/per-row quantity. See the "
+        "[dataset/min_trace_shrink] covariance setup: ...s lines run_experiments.py printed.)"
+    )
+
+    print("\n=== 7. Reconciliation cost by hierarchy structure ===")
+    recon_cost_means = records.groupby(["dataset", "reconcile"])["reconcile_seconds"].mean().reset_index()
+    recon_cost_means["hierarchy_type"] = recon_cost_means["dataset"].map(HIERARCHY_TYPE)
+    print(
+        recon_cost_means.groupby(["hierarchy_type", "reconcile"])["reconcile_seconds"]
+        .mean().unstack("reconcile").round(4)
+    )
+
+    print("\n=== 8. Fit cost (time_seconds) by reconciliation strategy, all methods pooled ===")
+    print(
+        "CAUTION: not apples-to-apples across strategies. bottom_up/top_down only fit the "
+        "bottom level; min_trace/min_trace_shrink fit every level (more series, more total "
+        "work), so part of any difference here is series count, not per-series cost - see "
+        "view 5 above for a same-series-set comparison instead."
+    )
+    print(records.groupby(["dataset", "reconcile"])["time_seconds"].mean().unstack("reconcile").round(4))
 
 
 if __name__ == "__main__":
