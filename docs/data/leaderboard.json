@@ -1,0 +1,1032 @@
+{
+  "generated_at": "2026-10-02T22:07:25+00:00",
+  "metrics": [
+    "mae",
+    "rmse",
+    "mase",
+    "time_seconds",
+    "reconcile_seconds"
+  ],
+  "rows": [
+    {
+      "dataset": "labour",
+      "reconcile": "bottom_up",
+      "method": "arima",
+      "mae": 13.252967,
+      "rmse": 15.270293,
+      "mase": 1.790204,
+      "time_seconds": 0.073543,
+      "reconcile_seconds": 0.009234
+    },
+    {
+      "dataset": "labour",
+      "reconcile": "bottom_up",
+      "method": "ets",
+      "mae": 8.659006,
+      "rmse": 10.09699,
+      "mase": 1.45871,
+      "time_seconds": 0.109315,
+      "reconcile_seconds": 0.009303
+    },
+    {
+      "dataset": "labour",
+      "reconcile": "bottom_up",
+      "method": "lightgbm",
+      "mae": 20.424488,
+      "rmse": 22.145035,
+      "mase": 2.330863,
+      "time_seconds": 0.036818,
+      "reconcile_seconds": 0.010964
+    },
+    {
+      "dataset": "labour",
+      "reconcile": "bottom_up",
+      "method": "naive",
+      "mae": 12.948911,
+      "rmse": 15.21361,
+      "mase": 1.843332,
+      "time_seconds": 1e-05,
+      "reconcile_seconds": 0.009229
+    },
+    {
+      "dataset": "labour",
+      "reconcile": "bottom_up",
+      "method": "seasonal_naive",
+      "mae": 22.94241,
+      "rmse": 24.426893,
+      "mase": 2.677379,
+      "time_seconds": 4.1e-05,
+      "reconcile_seconds": 0.009114
+    },
+    {
+      "dataset": "labour",
+      "reconcile": "bottom_up",
+      "method": "theta",
+      "mae": 10.416327,
+      "rmse": 12.201834,
+      "mase": 1.587274,
+      "time_seconds": 0.016489,
+      "reconcile_seconds": 0.010616
+    },
+    {
+      "dataset": "labour",
+      "reconcile": "top_down",
+      "method": "arima",
+      "mae": 72.258627,
+      "rmse": 73.292019,
+      "mase": 11.881151,
+      "time_seconds": 0.073663,
+      "reconcile_seconds": 0.013655
+    },
+    {
+      "dataset": "labour",
+      "reconcile": "top_down",
+      "method": "ets",
+      "mae": 71.049275,
+      "rmse": 71.563263,
+      "mase": 11.974205,
+      "time_seconds": 0.111602,
+      "reconcile_seconds": 0.011591
+    },
+    {
+      "dataset": "labour",
+      "reconcile": "top_down",
+      "method": "lightgbm",
+      "mae": 75.151868,
+      "rmse": 76.111013,
+      "mase": 11.829941,
+      "time_seconds": 0.040651,
+      "reconcile_seconds": 0.014199
+    },
+    {
+      "dataset": "labour",
+      "reconcile": "top_down",
+      "method": "naive",
+      "mae": 72.207124,
+      "rmse": 73.369014,
+      "mase": 11.897859,
+      "time_seconds": 1.3e-05,
+      "reconcile_seconds": 0.01556
+    },
+    {
+      "dataset": "labour",
+      "reconcile": "top_down",
+      "method": "seasonal_naive",
+      "mae": 74.749427,
+      "rmse": 75.273958,
+      "mase": 11.829068,
+      "time_seconds": 4.3e-05,
+      "reconcile_seconds": 0.012361
+    },
+    {
+      "dataset": "labour",
+      "reconcile": "top_down",
+      "method": "theta",
+      "mae": 71.409605,
+      "rmse": 72.17944,
+      "mase": 11.905456,
+      "time_seconds": 0.016747,
+      "reconcile_seconds": 0.012857
+    },
+    {
+      "dataset": "labour",
+      "reconcile": "min_trace",
+      "method": "arima",
+      "mae": 12.866556,
+      "rmse": 14.887079,
+      "mase": 1.750904,
+      "time_seconds": 0.071434,
+      "reconcile_seconds": 0.012175
+    },
+    {
+      "dataset": "labour",
+      "reconcile": "min_trace",
+      "method": "ets",
+      "mae": 8.304079,
+      "rmse": 9.640146,
+      "mase": 1.498076,
+      "time_seconds": 0.109817,
+      "reconcile_seconds": 0.012209
+    },
+    {
+      "dataset": "labour",
+      "reconcile": "min_trace",
+      "method": "lightgbm",
+      "mae": 21.898352,
+      "rmse": 23.553293,
+      "mase": 2.37711,
+      "time_seconds": 0.032896,
+      "reconcile_seconds": 0.012457
+    },
+    {
+      "dataset": "labour",
+      "reconcile": "min_trace",
+      "method": "naive",
+      "mae": 12.948911,
+      "rmse": 15.21361,
+      "mase": 1.843332,
+      "time_seconds": 1.2e-05,
+      "reconcile_seconds": 0.012687
+    },
+    {
+      "dataset": "labour",
+      "reconcile": "min_trace",
+      "method": "seasonal_naive",
+      "mae": 22.94241,
+      "rmse": 24.426893,
+      "mase": 2.677379,
+      "time_seconds": 4.2e-05,
+      "reconcile_seconds": 0.012301
+    },
+    {
+      "dataset": "labour",
+      "reconcile": "min_trace",
+      "method": "theta",
+      "mae": 10.069286,
+      "rmse": 11.783475,
+      "mase": 1.562714,
+      "time_seconds": 0.016152,
+      "reconcile_seconds": 0.012173
+    },
+    {
+      "dataset": "labour",
+      "reconcile": "min_trace_shrink",
+      "method": "arima",
+      "mae": 12.835993,
+      "rmse": 14.852757,
+      "mase": 1.754097,
+      "time_seconds": 0.069951,
+      "reconcile_seconds": 0.013323
+    },
+    {
+      "dataset": "labour",
+      "reconcile": "min_trace_shrink",
+      "method": "ets",
+      "mae": 7.936691,
+      "rmse": 9.215615,
+      "mase": 1.436166,
+      "time_seconds": 0.108764,
+      "reconcile_seconds": 0.013236
+    },
+    {
+      "dataset": "labour",
+      "reconcile": "min_trace_shrink",
+      "method": "lightgbm",
+      "mae": 22.455547,
+      "rmse": 24.113505,
+      "mase": 2.391759,
+      "time_seconds": 0.031529,
+      "reconcile_seconds": 0.050109
+    },
+    {
+      "dataset": "labour",
+      "reconcile": "min_trace_shrink",
+      "method": "naive",
+      "mae": 12.948911,
+      "rmse": 15.21361,
+      "mase": 1.843332,
+      "time_seconds": 1e-05,
+      "reconcile_seconds": 0.013697
+    },
+    {
+      "dataset": "labour",
+      "reconcile": "min_trace_shrink",
+      "method": "seasonal_naive",
+      "mae": 22.94241,
+      "rmse": 24.426893,
+      "mase": 2.677379,
+      "time_seconds": 4.2e-05,
+      "reconcile_seconds": 0.013067
+    },
+    {
+      "dataset": "labour",
+      "reconcile": "min_trace_shrink",
+      "method": "theta",
+      "mae": 10.002863,
+      "rmse": 11.731888,
+      "mase": 1.559244,
+      "time_seconds": 0.01596,
+      "reconcile_seconds": 0.013297
+    },
+    {
+      "dataset": "tourism",
+      "reconcile": "bottom_up",
+      "method": "arima",
+      "mae": 100.016701,
+      "rmse": 144.233324,
+      "mase": 0.791225,
+      "time_seconds": 0.075629,
+      "reconcile_seconds": 0.025623
+    },
+    {
+      "dataset": "tourism",
+      "reconcile": "bottom_up",
+      "method": "ets",
+      "mae": 60.290308,
+      "rmse": 80.491105,
+      "mase": 0.710072,
+      "time_seconds": 0.064526,
+      "reconcile_seconds": 0.021485
+    },
+    {
+      "dataset": "tourism",
+      "reconcile": "bottom_up",
+      "method": "lightgbm",
+      "mae": 82.54223,
+      "rmse": 110.280478,
+      "mase": 0.840883,
+      "time_seconds": 0.034734,
+      "reconcile_seconds": 0.035325
+    },
+    {
+      "dataset": "tourism",
+      "reconcile": "bottom_up",
+      "method": "naive",
+      "mae": 114.84227,
+      "rmse": 166.195549,
+      "mase": 0.992797,
+      "time_seconds": 1e-05,
+      "reconcile_seconds": 0.023747
+    },
+    {
+      "dataset": "tourism",
+      "reconcile": "bottom_up",
+      "method": "seasonal_naive",
+      "mae": 72.797252,
+      "rmse": 98.342993,
+      "mase": 0.840887,
+      "time_seconds": 4.4e-05,
+      "reconcile_seconds": 0.022088
+    },
+    {
+      "dataset": "tourism",
+      "reconcile": "bottom_up",
+      "method": "theta",
+      "mae": 61.002595,
+      "rmse": 81.541668,
+      "mase": 0.680457,
+      "time_seconds": 0.0088,
+      "reconcile_seconds": 0.024792
+    },
+    {
+      "dataset": "tourism",
+      "reconcile": "top_down",
+      "method": "arima",
+      "mae": 101.124045,
+      "rmse": 144.858815,
+      "mase": 0.800379,
+      "time_seconds": 0.079532,
+      "reconcile_seconds": 0.033219
+    },
+    {
+      "dataset": "tourism",
+      "reconcile": "top_down",
+      "method": "ets",
+      "mae": 77.237529,
+      "rmse": 106.181392,
+      "mase": 0.763651,
+      "time_seconds": 0.06693,
+      "reconcile_seconds": 0.028202
+    },
+    {
+      "dataset": "tourism",
+      "reconcile": "top_down",
+      "method": "lightgbm",
+      "mae": 93.808223,
+      "rmse": 127.972763,
+      "mase": 0.80134,
+      "time_seconds": 0.030246,
+      "reconcile_seconds": 0.032495
+    },
+    {
+      "dataset": "tourism",
+      "reconcile": "top_down",
+      "method": "naive",
+      "mae": 96.883873,
+      "rmse": 149.041556,
+      "mase": 0.771093,
+      "time_seconds": 1.2e-05,
+      "reconcile_seconds": 0.031546
+    },
+    {
+      "dataset": "tourism",
+      "reconcile": "top_down",
+      "method": "seasonal_naive",
+      "mae": 78.75208,
+      "rmse": 107.82629,
+      "mase": 0.767492,
+      "time_seconds": 8.3e-05,
+      "reconcile_seconds": 0.033519
+    },
+    {
+      "dataset": "tourism",
+      "reconcile": "top_down",
+      "method": "theta",
+      "mae": 77.842551,
+      "rmse": 106.611856,
+      "mase": 0.76549,
+      "time_seconds": 0.008176,
+      "reconcile_seconds": 0.026099
+    },
+    {
+      "dataset": "tourism",
+      "reconcile": "min_trace",
+      "method": "arima",
+      "mae": 100.341888,
+      "rmse": 144.253315,
+      "mase": 0.796908,
+      "time_seconds": 0.078421,
+      "reconcile_seconds": 0.048902
+    },
+    {
+      "dataset": "tourism",
+      "reconcile": "min_trace",
+      "method": "ets",
+      "mae": 60.232103,
+      "rmse": 80.361197,
+      "mase": 0.724891,
+      "time_seconds": 0.067528,
+      "reconcile_seconds": 0.101379
+    },
+    {
+      "dataset": "tourism",
+      "reconcile": "min_trace",
+      "method": "lightgbm",
+      "mae": 75.572235,
+      "rmse": 100.851252,
+      "mase": 0.929015,
+      "time_seconds": 0.026426,
+      "reconcile_seconds": 0.185898
+    },
+    {
+      "dataset": "tourism",
+      "reconcile": "min_trace",
+      "method": "naive",
+      "mae": 114.84227,
+      "rmse": 166.195549,
+      "mase": 0.992797,
+      "time_seconds": 1e-05,
+      "reconcile_seconds": 0.064789
+    },
+    {
+      "dataset": "tourism",
+      "reconcile": "min_trace",
+      "method": "seasonal_naive",
+      "mae": 72.797252,
+      "rmse": 98.342993,
+      "mase": 0.840887,
+      "time_seconds": 4.8e-05,
+      "reconcile_seconds": 0.055282
+    },
+    {
+      "dataset": "tourism",
+      "reconcile": "min_trace",
+      "method": "theta",
+      "mae": 59.829517,
+      "rmse": 80.298704,
+      "mase": 0.689833,
+      "time_seconds": 0.007737,
+      "reconcile_seconds": 0.100625
+    },
+    {
+      "dataset": "tourism",
+      "reconcile": "min_trace_shrink",
+      "method": "arima",
+      "mae": 100.09458,
+      "rmse": 144.290272,
+      "mase": 0.789874,
+      "time_seconds": 0.075763,
+      "reconcile_seconds": 0.140824
+    },
+    {
+      "dataset": "tourism",
+      "reconcile": "min_trace_shrink",
+      "method": "ets",
+      "mae": 59.847705,
+      "rmse": 79.937459,
+      "mase": 0.708033,
+      "time_seconds": 0.065475,
+      "reconcile_seconds": 0.177164
+    },
+    {
+      "dataset": "tourism",
+      "reconcile": "min_trace_shrink",
+      "method": "lightgbm",
+      "mae": 74.075523,
+      "rmse": 99.316373,
+      "mase": 0.796144,
+      "time_seconds": 0.025848,
+      "reconcile_seconds": 0.278062
+    },
+    {
+      "dataset": "tourism",
+      "reconcile": "min_trace_shrink",
+      "method": "naive",
+      "mae": 114.84227,
+      "rmse": 166.195549,
+      "mase": 0.992797,
+      "time_seconds": 1e-05,
+      "reconcile_seconds": 0.233428
+    },
+    {
+      "dataset": "tourism",
+      "reconcile": "min_trace_shrink",
+      "method": "seasonal_naive",
+      "mae": 72.797252,
+      "rmse": 98.342993,
+      "mase": 0.840887,
+      "time_seconds": 4.4e-05,
+      "reconcile_seconds": 0.098099
+    },
+    {
+      "dataset": "tourism",
+      "reconcile": "min_trace_shrink",
+      "method": "theta",
+      "mae": 59.781819,
+      "rmse": 80.196768,
+      "mase": 0.676766,
+      "time_seconds": 0.007722,
+      "reconcile_seconds": 0.093326
+    },
+    {
+      "dataset": "traffic",
+      "reconcile": "bottom_up",
+      "method": "arima",
+      "mae": 4.31474,
+      "rmse": 4.31474,
+      "mase": 1.099346,
+      "time_seconds": 0.056155,
+      "reconcile_seconds": 0.009867
+    },
+    {
+      "dataset": "traffic",
+      "reconcile": "bottom_up",
+      "method": "ets",
+      "mae": 2.063196,
+      "rmse": 2.063196,
+      "mase": 0.78437,
+      "time_seconds": 0.079086,
+      "reconcile_seconds": 0.010396
+    },
+    {
+      "dataset": "traffic",
+      "reconcile": "bottom_up",
+      "method": "lightgbm",
+      "mae": 0.918982,
+      "rmse": 0.918982,
+      "mase": 0.373486,
+      "time_seconds": 0.020201,
+      "reconcile_seconds": 0.011407
+    },
+    {
+      "dataset": "traffic",
+      "reconcile": "bottom_up",
+      "method": "naive",
+      "mae": 4.4182,
+      "rmse": 4.4182,
+      "mase": 1.196048,
+      "time_seconds": 1e-05,
+      "reconcile_seconds": 0.009521
+    },
+    {
+      "dataset": "traffic",
+      "reconcile": "bottom_up",
+      "method": "seasonal_naive",
+      "mae": 1.899335,
+      "rmse": 1.899335,
+      "mase": 0.798668,
+      "time_seconds": 4.1e-05,
+      "reconcile_seconds": 0.009517
+    },
+    {
+      "dataset": "traffic",
+      "reconcile": "bottom_up",
+      "method": "theta",
+      "mae": 4.500295,
+      "rmse": 4.500295,
+      "mase": 1.141593,
+      "time_seconds": 0.011176,
+      "reconcile_seconds": 0.010113
+    },
+    {
+      "dataset": "traffic",
+      "reconcile": "top_down",
+      "method": "arima",
+      "mae": 4.686116,
+      "rmse": 4.686116,
+      "mase": 1.55358,
+      "time_seconds": 0.057415,
+      "reconcile_seconds": 0.012928
+    },
+    {
+      "dataset": "traffic",
+      "reconcile": "top_down",
+      "method": "ets",
+      "mae": 2.53089,
+      "rmse": 2.53089,
+      "mase": 1.278177,
+      "time_seconds": 0.078906,
+      "reconcile_seconds": 0.014391
+    },
+    {
+      "dataset": "traffic",
+      "reconcile": "top_down",
+      "method": "lightgbm",
+      "mae": 2.308139,
+      "rmse": 2.308139,
+      "mase": 1.280282,
+      "time_seconds": 0.020268,
+      "reconcile_seconds": 0.014545
+    },
+    {
+      "dataset": "traffic",
+      "reconcile": "top_down",
+      "method": "naive",
+      "mae": 4.899383,
+      "rmse": 4.899383,
+      "mase": 1.567561,
+      "time_seconds": 1e-05,
+      "reconcile_seconds": 0.012061
+    },
+    {
+      "dataset": "traffic",
+      "reconcile": "top_down",
+      "method": "seasonal_naive",
+      "mae": 2.506686,
+      "rmse": 2.506686,
+      "mase": 1.278449,
+      "time_seconds": 4.1e-05,
+      "reconcile_seconds": 0.012179
+    },
+    {
+      "dataset": "traffic",
+      "reconcile": "top_down",
+      "method": "theta",
+      "mae": 4.342353,
+      "rmse": 4.342353,
+      "mase": 1.456257,
+      "time_seconds": 0.011141,
+      "reconcile_seconds": 0.012805
+    },
+    {
+      "dataset": "traffic",
+      "reconcile": "min_trace",
+      "method": "arima",
+      "mae": 4.173928,
+      "rmse": 4.173928,
+      "mase": 1.124581,
+      "time_seconds": 0.057376,
+      "reconcile_seconds": 0.028817
+    },
+    {
+      "dataset": "traffic",
+      "reconcile": "min_trace",
+      "method": "ets",
+      "mae": 1.842091,
+      "rmse": 1.842091,
+      "mase": 0.761881,
+      "time_seconds": 0.07882,
+      "reconcile_seconds": 0.019414
+    },
+    {
+      "dataset": "traffic",
+      "reconcile": "min_trace",
+      "method": "lightgbm",
+      "mae": 0.894232,
+      "rmse": 0.894232,
+      "mase": 0.380792,
+      "time_seconds": 0.02038,
+      "reconcile_seconds": 0.122033
+    },
+    {
+      "dataset": "traffic",
+      "reconcile": "min_trace",
+      "method": "naive",
+      "mae": 4.4182,
+      "rmse": 4.4182,
+      "mase": 1.196048,
+      "time_seconds": 1e-05,
+      "reconcile_seconds": 0.019624
+    },
+    {
+      "dataset": "traffic",
+      "reconcile": "min_trace",
+      "method": "seasonal_naive",
+      "mae": 1.899335,
+      "rmse": 1.899335,
+      "mase": 0.798668,
+      "time_seconds": 4.3e-05,
+      "reconcile_seconds": 0.019687
+    },
+    {
+      "dataset": "traffic",
+      "reconcile": "min_trace",
+      "method": "theta",
+      "mae": 4.034815,
+      "rmse": 4.034815,
+      "mase": 1.082113,
+      "time_seconds": 0.011286,
+      "reconcile_seconds": 0.031194
+    },
+    {
+      "dataset": "traffic",
+      "reconcile": "min_trace_shrink",
+      "method": "arima",
+      "mae": 4.071186,
+      "rmse": 4.071186,
+      "mase": 1.110781,
+      "time_seconds": 0.056574,
+      "reconcile_seconds": 0.03087
+    },
+    {
+      "dataset": "traffic",
+      "reconcile": "min_trace_shrink",
+      "method": "ets",
+      "mae": 1.804879,
+      "rmse": 1.804879,
+      "mase": 0.744138,
+      "time_seconds": 0.079307,
+      "reconcile_seconds": 0.029103
+    },
+    {
+      "dataset": "traffic",
+      "reconcile": "min_trace_shrink",
+      "method": "lightgbm",
+      "mae": 0.850254,
+      "rmse": 0.850254,
+      "mase": 0.374718,
+      "time_seconds": 0.020454,
+      "reconcile_seconds": 0.142269
+    },
+    {
+      "dataset": "traffic",
+      "reconcile": "min_trace_shrink",
+      "method": "naive",
+      "mae": 4.4182,
+      "rmse": 4.4182,
+      "mase": 1.196048,
+      "time_seconds": 1e-05,
+      "reconcile_seconds": 0.02481
+    },
+    {
+      "dataset": "traffic",
+      "reconcile": "min_trace_shrink",
+      "method": "seasonal_naive",
+      "mae": 1.899335,
+      "rmse": 1.899335,
+      "mase": 0.798668,
+      "time_seconds": 4.1e-05,
+      "reconcile_seconds": 0.026411
+    },
+    {
+      "dataset": "traffic",
+      "reconcile": "min_trace_shrink",
+      "method": "theta",
+      "mae": 4.026211,
+      "rmse": 4.026211,
+      "mase": 1.086708,
+      "time_seconds": 0.011216,
+      "reconcile_seconds": 0.045913
+    },
+    {
+      "dataset": "wiki2",
+      "reconcile": "bottom_up",
+      "method": "arima",
+      "mae": 868.032254,
+      "rmse": 868.032254,
+      "mase": 1.586675,
+      "time_seconds": 0.093732,
+      "reconcile_seconds": 0.01388
+    },
+    {
+      "dataset": "wiki2",
+      "reconcile": "bottom_up",
+      "method": "ets",
+      "mae": 962.859151,
+      "rmse": 962.859151,
+      "mase": 1.680782,
+      "time_seconds": 0.077588,
+      "reconcile_seconds": 0.013571
+    },
+    {
+      "dataset": "wiki2",
+      "reconcile": "bottom_up",
+      "method": "lightgbm",
+      "mae": 1107.430053,
+      "rmse": 1107.430053,
+      "mase": 1.797681,
+      "time_seconds": 0.019967,
+      "reconcile_seconds": 0.015166
+    },
+    {
+      "dataset": "wiki2",
+      "reconcile": "bottom_up",
+      "method": "naive",
+      "mae": 771.793467,
+      "rmse": 771.793467,
+      "mase": 1.443582,
+      "time_seconds": 1e-05,
+      "reconcile_seconds": 0.012918
+    },
+    {
+      "dataset": "wiki2",
+      "reconcile": "bottom_up",
+      "method": "seasonal_naive",
+      "mae": 986.157286,
+      "rmse": 986.157286,
+      "mase": 1.971506,
+      "time_seconds": 4.3e-05,
+      "reconcile_seconds": 0.013386
+    },
+    {
+      "dataset": "wiki2",
+      "reconcile": "bottom_up",
+      "method": "theta",
+      "mae": 824.872756,
+      "rmse": 824.872756,
+      "mase": 1.493166,
+      "time_seconds": 0.01279,
+      "reconcile_seconds": 0.013088
+    },
+    {
+      "dataset": "wiki2",
+      "reconcile": "top_down",
+      "method": "arima",
+      "mae": 1225.106075,
+      "rmse": 1225.106075,
+      "mase": 2.370081,
+      "time_seconds": 0.096992,
+      "reconcile_seconds": 0.01592
+    },
+    {
+      "dataset": "wiki2",
+      "reconcile": "top_down",
+      "method": "ets",
+      "mae": 1151.994203,
+      "rmse": 1151.994203,
+      "mase": 2.301373,
+      "time_seconds": 0.075744,
+      "reconcile_seconds": 0.015611
+    },
+    {
+      "dataset": "wiki2",
+      "reconcile": "top_down",
+      "method": "lightgbm",
+      "mae": 1337.061286,
+      "rmse": 1337.061286,
+      "mase": 2.470976,
+      "time_seconds": 0.02012,
+      "reconcile_seconds": 0.017617
+    },
+    {
+      "dataset": "wiki2",
+      "reconcile": "top_down",
+      "method": "naive",
+      "mae": 1137.37186,
+      "rmse": 1137.37186,
+      "mase": 2.316956,
+      "time_seconds": 1e-05,
+      "reconcile_seconds": 0.015723
+    },
+    {
+      "dataset": "wiki2",
+      "reconcile": "top_down",
+      "method": "seasonal_naive",
+      "mae": 1092.818968,
+      "rmse": 1092.818968,
+      "mase": 2.150043,
+      "time_seconds": 5.8e-05,
+      "reconcile_seconds": 0.016265
+    },
+    {
+      "dataset": "wiki2",
+      "reconcile": "top_down",
+      "method": "theta",
+      "mae": 1137.373171,
+      "rmse": 1137.373171,
+      "mase": 2.26516,
+      "time_seconds": 0.012449,
+      "reconcile_seconds": 0.015414
+    },
+    {
+      "dataset": "wiki2",
+      "reconcile": "min_trace",
+      "method": "arima",
+      "mae": 865.582147,
+      "rmse": 865.582147,
+      "mase": 1.921313,
+      "time_seconds": 0.096686,
+      "reconcile_seconds": 0.025377
+    },
+    {
+      "dataset": "wiki2",
+      "reconcile": "min_trace",
+      "method": "ets",
+      "mae": 1002.850168,
+      "rmse": 1002.850168,
+      "mase": 2.444184,
+      "time_seconds": 0.075654,
+      "reconcile_seconds": 0.026361
+    },
+    {
+      "dataset": "wiki2",
+      "reconcile": "min_trace",
+      "method": "lightgbm",
+      "mae": 1356.020781,
+      "rmse": 1356.020781,
+      "mase": 4.573843,
+      "time_seconds": 0.020082,
+      "reconcile_seconds": 0.10887
+    },
+    {
+      "dataset": "wiki2",
+      "reconcile": "min_trace",
+      "method": "naive",
+      "mae": 771.793467,
+      "rmse": 771.793467,
+      "mase": 1.443582,
+      "time_seconds": 1e-05,
+      "reconcile_seconds": 0.033781
+    },
+    {
+      "dataset": "wiki2",
+      "reconcile": "min_trace",
+      "method": "seasonal_naive",
+      "mae": 986.157286,
+      "rmse": 986.157286,
+      "mase": 1.971506,
+      "time_seconds": 4.4e-05,
+      "reconcile_seconds": 0.030072
+    },
+    {
+      "dataset": "wiki2",
+      "reconcile": "min_trace",
+      "method": "theta",
+      "mae": 871.565131,
+      "rmse": 871.565131,
+      "mase": 1.99466,
+      "time_seconds": 0.012782,
+      "reconcile_seconds": 0.026356
+    },
+    {
+      "dataset": "wiki2",
+      "reconcile": "min_trace_shrink",
+      "method": "arima",
+      "mae": 864.547729,
+      "rmse": 864.547729,
+      "mase": 1.610999,
+      "time_seconds": 0.096193,
+      "reconcile_seconds": 0.042772
+    },
+    {
+      "dataset": "wiki2",
+      "reconcile": "min_trace_shrink",
+      "method": "ets",
+      "mae": 996.209198,
+      "rmse": 996.209198,
+      "mase": 1.765064,
+      "time_seconds": 0.07564,
+      "reconcile_seconds": 0.032249
+    },
+    {
+      "dataset": "wiki2",
+      "reconcile": "min_trace_shrink",
+      "method": "lightgbm",
+      "mae": 1266.112302,
+      "rmse": 1266.112302,
+      "mase": 1.848407,
+      "time_seconds": 0.020117,
+      "reconcile_seconds": 0.120037
+    },
+    {
+      "dataset": "wiki2",
+      "reconcile": "min_trace_shrink",
+      "method": "naive",
+      "mae": 771.793467,
+      "rmse": 771.793467,
+      "mase": 1.443582,
+      "time_seconds": 1e-05,
+      "reconcile_seconds": 0.041511
+    },
+    {
+      "dataset": "wiki2",
+      "reconcile": "min_trace_shrink",
+      "method": "seasonal_naive",
+      "mae": 986.157286,
+      "rmse": 986.157286,
+      "mase": 1.971506,
+      "time_seconds": 4.2e-05,
+      "reconcile_seconds": 0.031549
+    },
+    {
+      "dataset": "wiki2",
+      "reconcile": "min_trace_shrink",
+      "method": "theta",
+      "mae": 859.077072,
+      "rmse": 859.077072,
+      "mase": 1.530681,
+      "time_seconds": 0.012653,
+      "reconcile_seconds": 0.041867
+    },
+    {
+      "dataset": "m5",
+      "reconcile": "bottom_up",
+      "method": "arima",
+      "mae": 1.846522,
+      "rmse": 2.30181,
+      "mase": 1.48547,
+      "time_seconds": 0.16908,
+      "reconcile_seconds": 0.003034
+    },
+    {
+      "dataset": "m5",
+      "reconcile": "bottom_up",
+      "method": "ets",
+      "mae": 1.556293,
+      "rmse": 1.9931,
+      "mase": 1.486738,
+      "time_seconds": 0.228837,
+      "reconcile_seconds": 0.002873
+    },
+    {
+      "dataset": "m5",
+      "reconcile": "bottom_up",
+      "method": "lightgbm",
+      "mae": 2.341883,
+      "rmse": 2.802534,
+      "mase": 1.722008,
+      "time_seconds": 0.058705,
+      "reconcile_seconds": 0.003413
+    },
+    {
+      "dataset": "m5",
+      "reconcile": "bottom_up",
+      "method": "naive",
+      "mae": 3.154015,
+      "rmse": 3.737947,
+      "mase": 1.928984,
+      "time_seconds": 1e-05,
+      "reconcile_seconds": 0.06704
+    },
+    {
+      "dataset": "m5",
+      "reconcile": "bottom_up",
+      "method": "seasonal_naive",
+      "mae": 1.823296,
+      "rmse": 2.499433,
+      "mase": 1.703316,
+      "time_seconds": 4.5e-05,
+      "reconcile_seconds": 0.003166
+    },
+    {
+      "dataset": "m5",
+      "reconcile": "bottom_up",
+      "method": "theta",
+      "mae": 1.532363,
+      "rmse": 1.954405,
+      "mase": 1.480924,
+      "time_seconds": 0.030887,
+      "reconcile_seconds": 0.003222
+    }
+  ]
+}
