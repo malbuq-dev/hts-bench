@@ -53,7 +53,7 @@ def main():
     )
     parser.add_argument("--n-lags", type=int, default=None, help="Lag window for lightgbm (default: --seasonal-period)")
     parser.add_argument(
-        "--metrics", nargs="+", default=["mae", "rmse", "mase"],
+        "--metrics", nargs="+", default=["mae", "rmse", "mase", "time_seconds"],
         help="mae/rmse/mase, plus time_seconds (per-series fit+forecast wall time; "
              "NaN for series that were reconciled rather than independently fit)",
     )
