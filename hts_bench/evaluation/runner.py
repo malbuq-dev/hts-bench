@@ -1,4 +1,4 @@
-from typing import Callable, List, Optional
+from typing import Callable, Dict, List, Optional
 
 import pandas as pd
 
@@ -15,24 +15,34 @@ def evaluate(
     horizon: int,
     metric_names: List[str] = ("mae", "rmse", "mase"),
     reconcile_fn: Optional[Callable[[HierarchicalDataset, pd.DataFrame], pd.DataFrame]] = None,
+    times: Optional[Dict[str, float]] = None,
 ) -> pd.DataFrame:
     """
     Scores forecasts against actuals for every series in the hierarchy, one row
-    per series indexed by series_id, columns = level + each requested metric.
+    per series indexed by series_id, columns = level + each requested metric
+    (+ time_seconds, when `times` is given).
 
     Mirrors TFB's Evaluator/FixedForecast split (ts_benchmark/evaluation/
     evaluator.py, .../strategy/fixed_forecast.py): metrics are pure functions
     keyed by name (METRICS), and each series gets one result row built from a
-    train/test split. Deliberately narrower than TFB here too, same spirit as
-    MethodBase/runner.run_forecast - no per-model timing, scaler, or parallel-
-    backend machinery, since this benchmark runs single-machine at a scale that
-    doesn't need it.
+    train/test split. Still narrower than TFB here: no scaler or parallel-
+    backend machinery, since this benchmark runs single-machine at a scale
+    that doesn't need it.
 
     Where this *isn't* narrower than TFB: TFB scores one flat set of series with
     no hierarchy concept. `forecasts` here holds raw bottom-level forecasts only
     (runner.run_forecast's output) - reconcile_fn (default: bottom_up) sums them
     up through S first, so every aggregate level gets scored too, not just the
     bottom. That reconciliation step has no TFB analogue at all.
+
+    times: the per-series_id dict run_forecast() returns alongside its
+    forecasts. When given, each row gets a `time_seconds` column - but only
+    for series that key actually appears in (run_forecast only measures the
+    series it was asked to fit). A reconciled/aggregate series derived via
+    S @ b̂ rather than independently fit (e.g. "Total" under the default
+    bottom-only run) has no entry, so it gets NaN - same convention
+    metrics.mase already uses for its own undefined case, and aggregation
+    (report/leaderboard.py) already skips NaNs the same way.
     """
     reconcile_fn = reconcile_fn or bottom_up
     reconciled = reconcile_fn(ds, forecasts)
@@ -51,6 +61,8 @@ def evaluate(
         hist_data = hist[series_id].to_numpy(dtype=float)
         for name in metric_names:
             row[name] = METRICS[name](actual, predicted, hist_data=hist_data)
+        if times is not None:
+            row["time_seconds"] = times.get(series_id, float("nan"))
         rows.append(row)
 
     return pd.DataFrame(rows).set_index("series_id")
@@ -106,9 +118,10 @@ def evaluate_rolling(
             name=ds.name, freq=ds.freq, data=ds.data.iloc[:cutoff], series_meta=ds.series_meta
         )
 
-        forecasts = run_forecast(origin_ds, method_factory, horizon, series_ids=series_ids)
+        forecasts, times = run_forecast(origin_ds, method_factory, horizon, series_ids=series_ids)
         result = evaluate(
-            origin_ds, forecasts, horizon, metric_names=metric_names, reconcile_fn=reconcile_fn
+            origin_ds, forecasts, horizon, metric_names=metric_names, reconcile_fn=reconcile_fn,
+            times=times,
         )
         result = result.reset_index()
         result.insert(0, "origin", origin_ds.data.index[-horizon])

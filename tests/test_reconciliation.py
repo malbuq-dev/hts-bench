@@ -112,7 +112,7 @@ def test_min_trace_is_coherent_on_real_datasets_with_a_nonlinear_method(name):
     # ETS is nonlinear, so independently-fit forecasts at each level genuinely
     # disagree - unlike a linear method (e.g. SeasonalNaive), which stays
     # coherent on its own and would make this indistinguishable from bottom_up.
-    forecasts = run_forecast(
+    forecasts, _ = run_forecast(
         ds, lambda: ETS(seasonal_period=seasonal_period), horizon, series_ids=ds.summing_matrix.row_ids
     )
 

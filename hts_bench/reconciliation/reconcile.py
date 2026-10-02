@@ -195,8 +195,8 @@ def min_trace_shrink(
     then use it like bottom_up/top_down/min_trace everywhere else:
 
         reconcile_fn = min_trace_shrink(ds, lambda: ETS(seasonal_period=12), horizon)
-        forecasts = run_forecast(ds, method_factory, horizon, series_ids=ds.summing_matrix.row_ids)
-        evaluate(ds, forecasts, horizon, reconcile_fn=reconcile_fn)
+        forecasts, times = run_forecast(ds, method_factory, horizon, series_ids=ds.summing_matrix.row_ids)
+        evaluate(ds, forecasts, horizon, reconcile_fn=reconcile_fn, times=times)
 
     method_factory must build a method whose fitted_values() is implemented
     (Naive, SeasonalNaive, ETS, ARIMA, LightGBM - not Theta, see

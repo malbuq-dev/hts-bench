@@ -52,7 +52,11 @@ def main():
         help="Seasonal period for seasonal_naive/ets/theta",
     )
     parser.add_argument("--n-lags", type=int, default=None, help="Lag window for lightgbm (default: --seasonal-period)")
-    parser.add_argument("--metrics", nargs="+", default=["mae", "rmse", "mase"])
+    parser.add_argument(
+        "--metrics", nargs="+", default=["mae", "rmse", "mase"],
+        help="mae/rmse/mase, plus time_seconds (per-series fit+forecast wall time; "
+             "NaN for series that were reconciled rather than independently fit)",
+    )
     parser.add_argument(
         "--reconcile",
         choices=list(RECONCILE_CHOICES),

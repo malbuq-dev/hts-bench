@@ -33,8 +33,9 @@ def labour_dataset():
     ids=["Naive", "SeasonalNaive", "ETS", "ARIMA", "Theta", "LightGBM"],
 )
 def test_method_runs_end_to_end_on_labour(labour_dataset, method_factory):
-    forecasts = run_forecast(labour_dataset, method_factory=method_factory, horizon=HORIZON)
+    forecasts, times = run_forecast(labour_dataset, method_factory=method_factory, horizon=HORIZON)
 
     assert forecasts.shape == (HORIZON, len(labour_dataset.bottom_series))
+    assert set(times.keys()) == set(labour_dataset.bottom_series)
     assert not forecasts.isna().to_numpy().any()
     assert np.isfinite(forecasts.to_numpy()).all()

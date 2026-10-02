@@ -91,7 +91,7 @@ def test_min_trace_shrink_is_coherent_on_real_datasets(name):
 
     from hts_bench.method.runner import run_forecast
 
-    forecasts = run_forecast(ds, method_factory, horizon, series_ids=ds.summing_matrix.row_ids)
+    forecasts, _ = run_forecast(ds, method_factory, horizon, series_ids=ds.summing_matrix.row_ids)
     reconcile_fn = min_trace_shrink(ds, method_factory, horizon)
 
     reconciled = reconcile_fn(ds, forecasts)

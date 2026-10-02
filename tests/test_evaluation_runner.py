@@ -30,6 +30,17 @@ def test_evaluate_scores_every_series_in_the_hierarchy(toy_ds, toy_forecasts):
     assert not result[["mae", "rmse"]].isna().to_numpy().any()
 
 
+def test_evaluate_adds_time_seconds_when_times_given(toy_ds, toy_forecasts):
+    times = {"s1": 0.01, "s2": 0.02}  # no "s0" - it's never independently fit
+
+    result = evaluate(toy_ds, toy_forecasts, horizon=1, times=times)
+
+    assert list(result.columns) == ["level", "mae", "rmse", "mase", "time_seconds"]
+    assert result.loc["s1", "time_seconds"] == pytest.approx(0.01)
+    assert result.loc["s2", "time_seconds"] == pytest.approx(0.02)
+    assert np.isnan(result.loc["s0", "time_seconds"])  # reconciled, not fit - see docstring
+
+
 def test_evaluate_reconcile_fn_changes_bottom_level_scores(toy_ds, toy_forecasts):
     bu = evaluate(toy_ds, toy_forecasts, horizon=1, reconcile_fn=bottom_up)
     td = evaluate(toy_ds, toy_forecasts, horizon=1, reconcile_fn=top_down)
@@ -65,7 +76,7 @@ def test_evaluate_runs_end_to_end_on_real_datasets(name):
     horizon = 4
     seasonal_period = 7 if name == "m5" else 12  # m5 is daily, labour/tourism are monthly
 
-    forecasts = run_forecast(
+    forecasts, _ = run_forecast(
         ds, method_factory=lambda: SeasonalNaive(seasonal_period=seasonal_period), horizon=horizon
     )
     result = evaluate(ds, forecasts, horizon=horizon)

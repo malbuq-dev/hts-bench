@@ -1,5 +1,6 @@
 import os
 
+import pandas as pd
 import pytest
 
 from hts_bench.data.loader import load_dataset
@@ -25,6 +26,16 @@ def test_compare_methods_stacks_one_result_per_method_and_series(toy_ds):
     assert set(result.index.get_level_values("method")) == {"Naive", "SeasonalNaive"}
     assert set(result.index.get_level_values("series_id")) == {"s0", "s1", "s2"}
     assert len(result) == 2 * 3  # 2 methods x 3 series
+
+
+def test_compare_methods_includes_time_seconds(toy_ds):
+    result = compare_methods(toy_ds, {"Naive": Naive}, horizon=1)
+
+    assert "time_seconds" in result.columns
+    bottom = result.loc["Naive"].loc[["s1", "s2"], "time_seconds"]
+    assert (bottom >= 0).all() and bottom.notna().all()
+    # s0 (Total) is bottom_up-reconciled, never independently fit.
+    assert pd.isna(result.loc[("Naive", "s0"), "time_seconds"])
 
 
 def test_compare_methods_uses_a_shared_reconcile_fn(toy_ds):

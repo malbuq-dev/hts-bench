@@ -1,4 +1,5 @@
-from typing import Callable, List, Optional
+import time
+from typing import Callable, Dict, List, Optional, Tuple
 
 import pandas as pd
 
@@ -11,7 +12,7 @@ def run_forecast(
     method_factory: Callable[[], MethodBase],
     horizon: int,
     series_ids: Optional[List[str]] = None,
-) -> pd.DataFrame:
+) -> Tuple[pd.DataFrame, Dict[str, float]]:
     """
     Fits and forecasts every series in `series_ids` independently, using a
     fixed train/test split (last `horizon` points held out - the same split TFB's
@@ -34,19 +35,31 @@ def run_forecast(
     anything to reconcile. If every non-bottom "forecast" is instead just S @ b̂
     derived from bottom forecasts, those methods collapse to bottom_up exactly
     - see reconciliation/reconcile.py's min_trace docstring for why.
+
+    Returns (forecasts, times): `times` maps each series_id to the wall-clock
+    seconds spent on that series' forecast_fit + forecast combined. Per series
+    rather than one total, so a method's cost can be broken down the same way
+    its accuracy already is (e.g. by hierarchy level) - see evaluation/
+    runner.py's evaluate(), which attaches this alongside the accuracy metrics
+    for series that were actually fit here (reconciled/aggregate series that
+    were instead derived via S @ b̂ have no entry, since nothing was fit for
+    them - see compare.py).
     """
     series_ids = series_ids if series_ids is not None else ds.bottom_series
     train = ds.data.iloc[:-horizon]
     test_index = ds.data.index[-horizon:]
 
     forecasts = {}
+    times = {}
     for series_id in series_ids:
         method = method_factory()
         train_series = train[series_id]
+        start = time.perf_counter()
         method.forecast_fit(train_series)
         forecasts[series_id] = method.forecast(horizon, train_series)
+        times[series_id] = time.perf_counter() - start
 
-    return pd.DataFrame(forecasts, index=test_index)
+    return pd.DataFrame(forecasts, index=test_index), times
 
 
 def compute_residuals(

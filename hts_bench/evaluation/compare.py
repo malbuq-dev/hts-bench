@@ -35,13 +35,19 @@ def compare_methods(
     ds.summing_matrix.row_ids when `reconcile_fn` is min_trace/min_trace_shrink
     - those need every level forecast independently, not just the bottom (see
     min_trace's docstring); bottom_up/top_down only ever need the default.
+
+    run_forecast's per-series timings are always forwarded to evaluate(), so
+    the result always has a time_seconds column (NaN for any series that
+    wasn't independently fit - see evaluate()'s docstring) - include it in
+    `metric_names` at the leaderboard/report stage to see it aggregated.
     """
     reconcile_fn = reconcile_fn or bottom_up
     results = []
     for method_name, factory in method_factories.items():
-        forecasts = run_forecast(ds, method_factory=factory, horizon=horizon, series_ids=series_ids)
+        forecasts, times = run_forecast(ds, method_factory=factory, horizon=horizon, series_ids=series_ids)
         result = evaluate(
-            ds, forecasts, horizon=horizon, metric_names=metric_names, reconcile_fn=reconcile_fn
+            ds, forecasts, horizon=horizon, metric_names=metric_names, reconcile_fn=reconcile_fn,
+            times=times,
         )
         result = result.reset_index()
         result.insert(0, "method", method_name)
