@@ -36,7 +36,13 @@ def evaluate(
     bottom. That reconciliation step has no TFB analogue at all.
 
     times: the per-series_id dict run_forecast() returns alongside its
-    forecasts. When given, each row gets a `time_seconds` column - but only
+    forecasts. When given, each row gets a `time_seconds` column regardless
+    of whether "time_seconds" is itself in `metric_names` (harmless either
+    way - it's skipped in the metric_names loop below rather than looked up
+    in METRICS, since it isn't a function of actual/predicted). This lets a
+    caller pass one shared metric_names list all the way through to
+    report.leaderboard() (e.g. CLI --metrics mae rmse mase time_seconds)
+    without it ever reaching METRICS. But only
     for series that key actually appears in (run_forecast only measures the
     series it was asked to fit). A reconciled/aggregate series derived via
     S @ b̂ rather than independently fit (e.g. "Total" under the default
@@ -60,6 +66,8 @@ def evaluate(
         predicted = reconciled[series_id].to_numpy(dtype=float)
         hist_data = hist[series_id].to_numpy(dtype=float)
         for name in metric_names:
+            if name == "time_seconds":
+                continue  # not in METRICS - attached below from `times` instead
             row[name] = METRICS[name](actual, predicted, hist_data=hist_data)
         if times is not None:
             row["time_seconds"] = times.get(series_id, float("nan"))
