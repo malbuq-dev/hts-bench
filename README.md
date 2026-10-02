@@ -5,7 +5,7 @@
 
 <div align="center">
 
-![Python](https://img.shields.io/badge/Python-3.8%E2%80%933.12-blue)
+![Python](https://img.shields.io/badge/Python-3.12-blue)
 ![Docker](https://img.shields.io/badge/Docker-pronto-blue)
 ![Testes](https://img.shields.io/badge/pytest-suíte%20automatizada-green)
 
@@ -98,7 +98,7 @@ Quando a avaliação usa múltiplas origens (*rolling-origin*), a agregação fi
 
 ## Instalação
 
-Testado sob Python 3.8 (ambiente de desenvolvimento) e validado também sob Python 3.12 via Docker, reproduzindo os mesmos resultados numéricos.
+Dependências com versões fixas para reprodutibilidade (veja `requirements.txt`).
 
 ```bash
 pip install -r requirements-dev.txt
