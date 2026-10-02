@@ -51,15 +51,19 @@ def top_down(ds: HierarchicalDataset, forecasts: pd.DataFrame) -> pd.DataFrame:
     mean historical (bottom / total) ratio, computed on data strictly before
     `forecasts.index` so there's no test-period leakage.
 
-    Not textbook top-down: that forecasts the top-level series independently and
-    disaggregates it. This implementation takes only bottom-level `forecasts`
-    (run_forecast's default), so the total redistributed is their raw S-implied
-    total (what bottom_up would put at the root) - only the *split* across
-    bottom series is top-down; the total itself is bottom-up's. run_forecast can
-    now produce an independent top-level forecast too (pass
-    series_ids=ds.summing_matrix.row_ids), but this function doesn't use one -
-    a genuine forecast-the-top variant would read it from `forecasts` instead of
-    deriving the total via aggregate_from_bottom, same change min_trace needed.
+    Textbook top-down when `forecasts` includes the root series' own forecast
+    (pass series_ids=ds.summing_matrix.row_ids to run_forecast, same as
+    min_trace needs): the total redistributed is then the root's genuinely
+    independent forecast, not derived from the bottom ones - forecast the top,
+    then disaggregate it, per the original method.
+
+    Falls back to the bottom-up-implied total (S @ b_hat via
+    aggregate_from_bottom) when the root isn't in `forecasts` - the bottom-only
+    default run_forecast produces. In that case only the *split* across bottom
+    series is genuinely top-down; the total itself is bottom-up's. This keeps
+    every existing bottom-only caller working unchanged, while letting callers
+    that already fit every level (for min_trace, say) get the textbook version
+    for free from the same forecasts.
     """
     S = ds.summing_matrix
     root_id = _root_series_id(ds)
@@ -67,7 +71,10 @@ def top_down(ds: HierarchicalDataset, forecasts: pd.DataFrame) -> pd.DataFrame:
     hist = ds.data[ds.data.index < forecasts.index.min()]
     proportions = hist[S.col_ids].div(hist[root_id], axis=0).mean()
 
-    total_forecast = aggregate_from_bottom(S, forecasts)[root_id]
+    if root_id in forecasts.columns:
+        total_forecast = forecasts[root_id]
+    else:
+        total_forecast = aggregate_from_bottom(S, forecasts)[root_id]
     disaggregated = pd.DataFrame(
         np.outer(total_forecast.to_numpy(), proportions.to_numpy()),
         index=forecasts.index,

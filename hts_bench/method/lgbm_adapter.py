@@ -17,10 +17,17 @@ class LGBMAdapter(MethodBase):
     this is a local variant: one LGBMRegressor per series, same as the ARIMA/
     ETS/Theta adapters. A true global model needs a different entry point that
     fits once across ds.get_bottom_data() - future work, not this class.
+
+    random_state defaults to a fixed seed rather than LightGBM's own default
+    (unseeded, genuinely random tree-building) - every other method here is
+    deterministic given its inputs, so leaving this one non-reproducible would
+    mean re-running the same command could silently change reported numbers.
+    Pass a different value (or None, LightGBM's default) explicitly to opt out.
     """
 
-    def __init__(self, n_lags: int = 12, **lgbm_kwargs):
+    def __init__(self, n_lags: int = 12, random_state: int = 42, **lgbm_kwargs):
         self.n_lags = n_lags
+        self.random_state = random_state
         self.lgbm_kwargs = lgbm_kwargs
         self._model = None
         self._history: List[float] = []
@@ -37,7 +44,7 @@ class LGBMAdapter(MethodBase):
                 f"train_data has {len(values)} points, needs > n_lags={self.n_lags}"
             )
         X, y = self._lag_frame(values)
-        self._model = LGBMRegressor(**self.lgbm_kwargs)
+        self._model = LGBMRegressor(random_state=self.random_state, **self.lgbm_kwargs)
         self._model.fit(X, y)
         self._history = values[-self.n_lags :].tolist()
         self._train_index = train_data.index

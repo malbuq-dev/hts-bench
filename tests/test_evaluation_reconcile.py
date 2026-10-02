@@ -52,6 +52,23 @@ def test_top_down_is_coherent(toy_ds, toy_forecasts):
     )
 
 
+def test_top_down_uses_an_independent_root_forecast_when_given_one(toy_ds, toy_forecasts):
+    # Textbook top-down: when the root is forecast independently (not just
+    # derived from the bottom series), that's the total redistributed - not
+    # the bottom-up-implied one.
+    with_root = toy_forecasts.copy()
+    with_root["s0"] = 999.0  # deliberately not s1 + s2 (=80)
+
+    reconciled = top_down(toy_ds, with_root)
+
+    assert reconciled["s0"].iloc[0] == pytest.approx(999.0)
+    assert reconciled["s1"].iloc[0] == pytest.approx(999.0 * 0.63125)
+    assert reconciled["s2"].iloc[0] == pytest.approx(999.0 * 0.36875)
+    assert reconciled["s0"].iloc[0] == pytest.approx(
+        reconciled["s1"].iloc[0] + reconciled["s2"].iloc[0]
+    )
+
+
 def test_min_trace_rejects_bottom_only_forecasts(toy_ds, toy_forecasts):
     with pytest.raises(ValueError, match="independent forecast for every series"):
         min_trace(toy_ds, toy_forecasts)
