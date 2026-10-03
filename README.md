@@ -1,11 +1,11 @@
 <div align="center">
-
-<img src="docs/assets/HTSBench-logo-light.svg" alt="HTSBench" width="220" />
-
+  <img src="docs/assets/HTSBench-logo-light.svg" alt="HTSBench" width="220" />
   <p><b>Uma plataforma de Benchmarking para Séries Temporais Hierárquicas</b></p>
-  [HTSBench](https://malbuq-dev.github.io/hts-bench/leaderboard.html)
+  <p>
+    <a href="https://malbuq-dev.github.io/hts-bench/leaderboard.html">HTSBench</a>
+  </p>
 </div>
-
+  
 <div align="center">
 
 ![Python](https://img.shields.io/badge/Python-3.12-blue)
