@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-03T00:07:50+00:00",
+  "generated_at": "2026-10-03T01:23:20+00:00",
   "metrics": [
     "mae",
     "rmse",
@@ -1087,6 +1087,66 @@
       "mase": 1.501869,
       "time_seconds": 0.030894,
       "reconcile_seconds": 0.126665
+    },
+    {
+      "dataset": "m5",
+      "reconcile": "min_trace",
+      "method": "arima",
+      "mae": 1.843285,
+      "rmse": 2.332575,
+      "mase": 1.487613,
+      "time_seconds": 0.168323,
+      "reconcile_seconds": 2.817752
+    },
+    {
+      "dataset": "m5",
+      "reconcile": "min_trace",
+      "method": "ets",
+      "mae": 1.555151,
+      "rmse": 1.995636,
+      "mase": 1.466519,
+      "time_seconds": 0.228234,
+      "reconcile_seconds": 2.784294
+    },
+    {
+      "dataset": "m5",
+      "reconcile": "min_trace",
+      "method": "lightgbm",
+      "mae": 1.685692,
+      "rmse": 2.140405,
+      "mase": 1.637307,
+      "time_seconds": 0.059762,
+      "reconcile_seconds": 2.582637
+    },
+    {
+      "dataset": "m5",
+      "reconcile": "min_trace",
+      "method": "naive",
+      "mae": 3.154015,
+      "rmse": 3.737947,
+      "mase": 1.928984,
+      "time_seconds": 1e-05,
+      "reconcile_seconds": 3.22676
+    },
+    {
+      "dataset": "m5",
+      "reconcile": "min_trace",
+      "method": "seasonal_naive",
+      "mae": 1.823296,
+      "rmse": 2.499433,
+      "mase": 1.703316,
+      "time_seconds": 6.2e-05,
+      "reconcile_seconds": 3.431982
+    },
+    {
+      "dataset": "m5",
+      "reconcile": "min_trace",
+      "method": "theta",
+      "mae": 1.53257,
+      "rmse": 1.956261,
+      "mase": 1.482103,
+      "time_seconds": 0.030878,
+      "reconcile_seconds": 3.003522
     }
   ]
 }
