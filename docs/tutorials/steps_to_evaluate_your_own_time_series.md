@@ -1,6 +1,6 @@
 # Como avaliar sobre suas próprias séries
 
-> Diferente do TFB, o HTSBench não trabalha com séries soltas: todo dataset precisa declarar uma **hierarquia** (quais séries são agregados de quais outras). Se você só tem uma série isolada, sem estrutura hierárquica nenhuma, veja a seção [Caso sem hierarquia](#caso-sem-hierarquia) ao final — é o caso trivial do formato abaixo.
+> O HTSBench não trabalha com séries soltas: todo dataset precisa declarar uma **hierarquia** (quais séries são agregados de quais outras). Se você só tem uma série isolada, sem estrutura hierárquica nenhuma, veja a seção [Caso sem hierarquia](#caso-sem-hierarquia) ao final - é o caso trivial do formato abaixo.
 
 ## O formato de dataset
 
@@ -8,15 +8,15 @@ Um dataset é um diretório `dataset/<nome>/` com três arquivos:
 
 | Arquivo | Conteúdo |
 |---|---|
-| `data.csv` | Índice `date`, uma coluna por série — **todos** os níveis, de nível-base aos agregados, lado a lado |
+| `data.csv` | Índice `date`, uma coluna por série - **todos** os níveis, de nível-base aos agregados, lado a lado |
 | `series_meta.csv` | Índice `series_id`, colunas `level`, `is_bottom` e uma coluna por dimensão da hierarquia |
 | `meta.json` | `name`, `freq`, `horizon_suggested`, `n_series`, `n_bottom`, `data_files` |
 
-Em `series_meta.csv`, uma série de nível agregado deixa em branco (`NaN`) as dimensões que ela não especifica. A matriz de agregação S é derivada automaticamente desse arquivo por `hts_bench/data/hierarchy.py` — você nunca escreve S à mão.
+Em `series_meta.csv`, uma série de nível agregado deixa em branco (`NaN`) as dimensões que ela não especifica. A matriz de agregação S é derivada automaticamente desse arquivo por `hts_bench/data/hierarchy.py` - você nunca escreve S à mão.
 
 ## Caso geral: você tem dados de nível-base e conhece a hierarquia
 
-Esse é o caso mais comum na prática (é exatamente a situação do M5 — veja `scripts/convert_m5.py`): você tem os valores reais apenas para as séries de nível-base, e quer que o HTSBench calcule os agregados automaticamente a partir delas.
+Esse é o caso mais comum na prática (é exatamente a situação do M5 - veja `scripts/convert_m5.py`): você tem os valores reais apenas para as séries de nível-base, e quer que o HTSBench calcule os agregados automaticamente a partir delas.
 
 Usamos aqui a mesma hierarquia didática Região × Produto já usada nas demais figuras do projeto (CA/NY × Trousers/T-shirts). O código abaixo foi testado e roda de ponta a ponta.
 
@@ -54,7 +54,7 @@ S = build_summing_matrix(series_meta)
 full_data = aggregate_from_bottom(S, bottom_data)
 ```
 
-`full_data` já sai com uma coluna por série — nível-base e agregados juntos, exatamente o que `data.csv` espera.
+`full_data` já sai com uma coluna por série - nível-base e agregados juntos, exatamente o que `data.csv` espera.
 
 ### 3. Escreva os três arquivos
 
@@ -82,7 +82,7 @@ with open(os.path.join(out_dir, "meta.json"), "w") as f:
 
 ### 4. Carregue e verifique a coerência
 
-`check_coherence` confirma que y = S·b realmente vale em todo o `data.csv` escrito — útil tanto aqui quanto para pegar erros de digitação na hierarquia.
+`check_coherence` confirma que y = S·b realmente vale em todo o `data.csv` escrito - útil tanto aqui quanto para pegar erros de digitação na hierarquia.
 
 ```python
 from hts_bench.data.loader import load_dataset

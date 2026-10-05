@@ -61,7 +61,7 @@ A figura abaixo resume o fluxo: os cinco componentes à esquerda (Dados, Método
 
 Em linhas gerais:
 
-- **Dados** carrega um dataset hierárquico (`dataset/<nome>/`) e deriva a matriz de somação S que descreve a hierarquia a partir de `series_meta.csv` — nenhuma hierarquia é codificada à mão em nenhum outro lugar do código.
+- **Dados** carrega um dataset hierárquico (`dataset/<nome>/`) e deriva a matriz de somação S que descreve a hierarquia a partir de `series_meta.csv` - nenhuma hierarquia é codificada à mão em nenhum outro lugar do código.
 
 - **Métodos** implementam uma interface única e univariada (`MethodBase`); cada método é ajustado e previsto série por série, sem nunca enxergar a hierarquia.
 
@@ -77,8 +77,8 @@ Em linhas gerais:
 |-----------|:----------:|:--------------------:|:-------------------:|:----------:|-------|
 | `labour`  | Mensal     | 57 (32)               | 8                    | Cruzada (região × sexo × situação de emprego) | Australian Labour Force, via [Nixtla `datasetsforecast`](https://github.com/Nixtla/datasetsforecast) |
 | `tourism` | Mensal     | 555 (304)              | 24                   | Cruzada (geografia × propósito da viagem) | Australian Tourism (Athanasopoulos et al.), via `datasetsforecast` |
-| `traffic` | Diária     | 207 (200)               | 1                    | Em árvore | San Francisco Traffic — Rangapuram et al., **End-to-End Learning of Coherent Probabilistic Forecasts for Hierarchical Time Series**, ICML 2021 (PMLR 139:8832–8843) |
-| `wiki2`   | Diária     | 199 (150)               | 1                    | Em árvore | Wikipedia page views — mesma fonte do `traffic` acima |
+| `traffic` | Diária     | 207 (200)               | 1                    | Em árvore | San Francisco Traffic, Rangapuram et al., **End-to-End Learning of Coherent Probabilistic Forecasts for Hierarchical Time Series**, ICML 2021 (PMLR 139:8832–8843) |
+| `wiki2`   | Diária     | 199 (150)               | 1                    | Em árvore | Wikipedia page views, mesma fonte do `traffic` acima |
 | `m5`      | Diária     | 9.180 (3.049)¹          | 28                   | Cruzada (estado × loja × categoria × departamento × item) | M5 Forecasting Competition, via `datasetsforecast.m5` (espelho dos arquivos originais do Kaggle, sem necessidade de conta) |
 
 ¹ Por padrão `m5` é convertido apenas para a loja `CA_1`, para manter o build rápido; `python scripts/convert_m5.py --store all` reconstrói o dataset completo (~30.490 séries de nível base), usando exatamente o mesmo código.
@@ -87,7 +87,7 @@ Cada dataset é um diretório `dataset/<nome>/` com três arquivos: `data.csv` (
 
 ## Métodos de previsão
 
-Todo método implementa a interface `MethodBase` (`hts_bench/method/base.py`): univariado, agnóstico à hierarquia — recebe uma série, devolve uma previsão. Reconciliação é responsabilidade do módulo de Reconciliação, não do método.
+Todo método implementa a interface `MethodBase` (`hts_bench/method/base.py`): univariado, agnóstico à hierarquia - recebe uma série, devolve uma previsão. Reconciliação é responsabilidade do módulo de Reconciliação, não do método.
 
 | Método | Descrição | Biblioteca |
 |---|---|---|
@@ -98,9 +98,9 @@ Todo método implementa a interface `MethodBase` (`hts_bench/method/base.py`): u
 | `theta` | Método Theta | `statsmodels` |
 | `lightgbm` | Gradient boosting sobre uma janela de **lags**, por série, com previsão recursiva | `lightgbm` |
 
-`lightgbm` é uma variante **local** (um modelo por série) — não o LightGBM "global" (um único modelo treinado sobre todas as séries de um dataset) que venceu a competição M5. Sua semente (`random_state=42`) é fixa por padrão para que reexecutar o mesmo experimento não altere os números reportados.
+`lightgbm` é uma variante **local** (um modelo por série) - não o LightGBM "global" (um único modelo treinado sobre todas as séries de um dataset) que venceu a competição M5. Sua semente (`random_state=42`) é fixa por padrão para que reexecutar o mesmo experimento não altere os números reportados.
 
-`theta` não implementa `fitted_values()` (o objeto de resultado do `statsmodels` para Theta não expõe valores ajustados in-sample), por isso não pode ser usado como estimador de resíduos para `min_trace_shrink` — os demais métodos podem.
+`theta` não implementa `fitted_values()` (o objeto de resultado do `statsmodels` para Theta não expõe valores ajustados in-sample), por isso não pode ser usado como estimador de resíduos para `min_trace_shrink` - os demais métodos podem.
 
 ## Reconciliação hierárquica
 
@@ -111,11 +111,11 @@ Dado um conjunto de previsões (possivelmente incoerentes entre si), a reconcili
 | `bottom_up` | Soma as previsões do nível base através de S. Baseline padrão da literatura. |
 | `top_down` | Desagrega o total do topo por proporções históricas médias (Gross & Sohl, 1990). Quando uma previsão independente da série raiz está disponível, ela é usada como o total a desagregar (versão de livro-texto); caso contrário, o total cai de volta para o valor implícito pelo bottom-up. |
 | `min_trace` | MinT (Wickramasuriya, Athanasopoulos & Hyndman, 2019), com peso estrutural (WLSS, baseado no número de séries base que cada nó agrega) por padrão. Exige uma previsão independente para **todo** nível da hierarquia, não só o nível base. |
-| `min_trace_shrink` | MinT(shrink): mesma formulação do `min_trace`, mas com a matriz de covariância estimada por **shrinkage** (Schäfer & Strimmer, 2005) a partir dos resíduos in-sample de um método auxiliar. Não aplicada ao `m5` no **sweep** padrão — a inversão de uma covariância densa (n×n) deixa de ser prática na escala do M5, limitação também presente no artigo original do RHiOTS, que subamostrou M5 pelo mesmo motivo. |
+| `min_trace_shrink` | MinT(shrink): mesma formulação do `min_trace`, mas com a matriz de covariância estimada por **shrinkage** (Schäfer & Strimmer, 2005) a partir dos resíduos in-sample de um método auxiliar. Não aplicada ao `m5` no **sweep** padrão - a inversão de uma covariância densa (n×n) deixa de ser prática na escala do M5, limitação também presente no artigo original do RHiOTS, que subamostrou M5 pelo mesmo motivo. |
 
 ## Métricas
 
-`mae`, `rmse` e `mase` (Mean Absolute Scaled Error — erro absoluto médio escalado pelo erro do **naive** sazonal sobre o histórico de treino, o que a torna comparável entre séries de escalas diferentes e é especialmente mais segura que o MAPE em séries com valores zero, como em parte do M5).
+`mae`, `rmse` e `mase` (Mean Absolute Scaled Error - erro absoluto médio escalado pelo erro do **naive** sazonal sobre o histórico de treino, o que a torna comparável entre séries de escalas diferentes e é especialmente mais segura que o MAPE em séries com valores zero, como em parte do M5).
 
 ## Instalação
 
@@ -133,7 +133,7 @@ docker run --rm -v "$(pwd)/result:/app/result" hts-bench:latest \
   --dataset labour --methods naive seasonal_naive --horizon 8 --records-dir result
 ```
 
-A imagem roda a suíte de testes completa como parte do build — se algum teste falhar, a imagem não é construída. O `ENTRYPOINT` é o próprio `scripts/run_benchmark.py`, então qualquer argumento passado ao `docker run` depois do nome da imagem vai direto para o CLI.
+A imagem roda a suíte de testes completa como parte do build - se algum teste falhar, a imagem não é construída. O `ENTRYPOINT` é o próprio `scripts/run_benchmark.py`, então qualquer argumento passado ao `docker run` depois do nome da imagem vai direto para o CLI.
 
 ## Uso rápido
 
@@ -163,7 +163,7 @@ python scripts/run_benchmark.py \
 python scripts/run_experiments.py
 ```
 
-`scripts/analyze_experiments.py` então lê tudo que foi salvo em `result/` — sem reajustar nenhum modelo — e produz as visões de comparação usadas na análise de resultados: método × dataset, comparação entre estratégias de reconciliação, benefício da reconciliação por profundidade na hierarquia, e agrupamento por tipo de hierarquia (cruzada vs. em árvore):
+`scripts/analyze_experiments.py` então lê tudo que foi salvo em `result/` - sem reajustar nenhum modelo - e produz as visões de comparação usadas na análise de resultados: método × dataset, comparação entre estratégias de reconciliação, benefício da reconciliação por profundidade na hierarquia, e agrupamento por tipo de hierarquia (cruzada vs. em árvore):
 
 ```bash
 python scripts/analyze_experiments.py
@@ -186,15 +186,15 @@ python scripts/convert_m5.py --store all  # dataset M5 completo
 
 ## Como estender a plataforma
 
-**Novo método**: implemente `MethodBase` (`hts_bench/method/base.py`) — `forecast_fit`, `forecast`, a propriedade `name` e, opcionalmente, `fitted_values()` (necessário apenas se o método for usado para estimar resíduos em `min_trace_shrink`). Tutorial completo, com um método real construído passo a passo: [docs/tutorials/steps_to_develop_your_own_method.md](docs/tutorials/steps_to_develop_your_own_method.md).
+**Novo método**: implemente `MethodBase` (`hts_bench/method/base.py`) - `forecast_fit`, `forecast`, a propriedade `name` e, opcionalmente, `fitted_values()` (necessário apenas se o método for usado para estimar resíduos em `min_trace_shrink`). Tutorial completo, com um método real construído passo a passo: [docs/tutorials/steps_to_develop_your_own_method.md](docs/tutorials/steps_to_develop_your_own_method.md).
 
 **Novo dataset**: crie `dataset/<nome>/` com:
 
-- `data.csv` — índice `date`, uma coluna por série (todos os níveis, incluindo agregados);
+- `data.csv` - índice `date`, uma coluna por série (todos os níveis, incluindo agregados);
 
-- `series_meta.csv` — índice `series_id`, colunas `level`, `is_bottom` e uma coluna por dimensão da hierarquia (uma série de nível agregado deixa `NaN` nas dimensões que ela não especifica);
+- `series_meta.csv` - índice `series_id`, colunas `level`, `is_bottom` e uma coluna por dimensão da hierarquia (uma série de nível agregado deixa `NaN` nas dimensões que ela não especifica);
 
-- `meta.json` — `name`, `freq`, `horizon_suggested`, `n_series`, `n_bottom`, `data_files`.
+- `meta.json` - `name`, `freq`, `horizon_suggested`, `n_series`, `n_bottom`, `data_files`.
 
 Tutorial completo, incluindo como derivar os agregados automaticamente a partir de dados de nível-base: [docs/tutorials/steps_to_evaluate_your_own_time_series.md](docs/tutorials/steps_to_evaluate_your_own_time_series.md).
 
