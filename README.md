@@ -186,7 +186,7 @@ python scripts/convert_m5.py --store all  # dataset M5 completo
 
 ## Como estender a plataforma
 
-**Novo método**: implemente `MethodBase` (`hts_bench/method/base.py`) — `forecast_fit`, `forecast`, a propriedade `name` e, opcionalmente, `fitted_values()` (necessário apenas se o método for usado para estimar resíduos em `min_trace_shrink`).
+**Novo método**: implemente `MethodBase` (`hts_bench/method/base.py`) — `forecast_fit`, `forecast`, a propriedade `name` e, opcionalmente, `fitted_values()` (necessário apenas se o método for usado para estimar resíduos em `min_trace_shrink`). Tutorial completo, com um método real construído passo a passo: [docs/tutorials/steps_to_develop_your_own_method.md](docs/tutorials/steps_to_develop_your_own_method.md).
 
 **Novo dataset**: crie `dataset/<nome>/` com:
 
@@ -195,6 +195,8 @@ python scripts/convert_m5.py --store all  # dataset M5 completo
 - `series_meta.csv` — índice `series_id`, colunas `level`, `is_bottom` e uma coluna por dimensão da hierarquia (uma série de nível agregado deixa `NaN` nas dimensões que ela não especifica);
 
 - `meta.json` — `name`, `freq`, `horizon_suggested`, `n_series`, `n_bottom`, `data_files`.
+
+Tutorial completo, incluindo como derivar os agregados automaticamente a partir de dados de nível-base: [docs/tutorials/steps_to_evaluate_your_own_time_series.md](docs/tutorials/steps_to_evaluate_your_own_time_series.md).
 
 ## Testes
 
@@ -255,3 +257,7 @@ Os datasets `traffic` e `wiki2`, e a convenção de horizonte=1 usada para ambos
 ```
 
 A reconciliação `min_trace`/`min_trace_shrink` segue Wickramasuriya, Athanasopoulos & Hyndman (2019), **Optimal Forecast Reconciliation for Hierarchical and Grouped Time Series Through Trace Minimization**, JASA.
+
+## Contato
+
+Dúvidas, sugestões ou problemas: abra uma [issue](https://github.com/malbuq-dev/hts-bench/issues) neste repositório.
