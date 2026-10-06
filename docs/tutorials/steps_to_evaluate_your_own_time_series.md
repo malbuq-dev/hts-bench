@@ -1,26 +1,26 @@
-# Como avaliar sobre suas próprias séries
+# Steps to evaluate on your own time series
 
-> O HTSBench não trabalha com séries soltas: todo dataset precisa declarar uma **hierarquia** (quais séries são agregados de quais outras). Se você só tem uma série isolada, sem estrutura hierárquica nenhuma, veja a seção [Caso sem hierarquia](#caso-sem-hierarquia) ao final - é o caso trivial do formato abaixo.
+> HTSBench doesn't work with standalone series: every dataset needs to declare a **hierarchy** (which series are aggregates of which others). If you only have a single, isolated series with no hierarchical structure at all, see the [No-hierarchy case](#no-hierarchy-case) section at the end - it's the trivial case of the format below.
 
-## O formato de dataset
+## The dataset format
 
-Um dataset é um diretório `dataset/<nome>/` com três arquivos:
+A dataset is a `dataset/<name>/` directory with three files:
 
-| Arquivo | Conteúdo |
+| File | Content |
 |---|---|
-| `data.csv` | Índice `date`, uma coluna por série - **todos** os níveis, de nível-base aos agregados, lado a lado |
-| `series_meta.csv` | Índice `series_id`, colunas `level`, `is_bottom` e uma coluna por dimensão da hierarquia |
+| `data.csv` | `date` index, one column per series - **every** level, from bottom to aggregates, side by side |
+| `series_meta.csv` | `series_id` index, columns `level`, `is_bottom`, and one column per hierarchy dimension |
 | `meta.json` | `name`, `freq`, `horizon_suggested`, `n_series`, `n_bottom`, `data_files` |
 
-Em `series_meta.csv`, uma série de nível agregado deixa em branco (`NaN`) as dimensões que ela não especifica. A matriz de agregação S é derivada automaticamente desse arquivo por `hts_bench/data/hierarchy.py` - você nunca escreve S à mão.
+In `series_meta.csv`, an aggregate-level series leaves blank (`NaN`) the dimensions it doesn't specify. The aggregation matrix S is derived automatically from this file by `hts_bench/data/hierarchy.py` - you never write S by hand.
 
-## Caso geral: você tem dados de nível-base e conhece a hierarquia
+## General case: you have bottom-level data and know the hierarchy
 
-Esse é o caso mais comum na prática (é exatamente a situação do M5 - veja `scripts/convert_m5.py`): você tem os valores reais apenas para as séries de nível-base, e quer que o HTSBench calcule os agregados automaticamente a partir delas.
+This is the most common case in practice (it's exactly the situation for M5_lite - see `scripts/convert_m5.py`): you only have the real values for the bottom-level series, and want HTSBench to compute the aggregates automatically from them.
 
-Usamos aqui a mesma hierarquia didática Região × Produto já usada nas demais figuras do projeto (CA/NY × Trousers/T-shirts). O código abaixo foi testado e roda de ponta a ponta.
+Here we use the same Region × Product toy hierarchy already used in the project's other figures (CA/NY × Trousers/T-shirts). The code below was tested and runs end to end.
 
-### 1. Descreva a hierarquia em `series_meta`
+### 1. Describe the hierarchy in `series_meta`
 
 ```python
 import pandas as pd
@@ -40,9 +40,9 @@ series_meta = pd.DataFrame(
 ).set_index("series_id")
 ```
 
-### 2. Derive S e calcule os agregados a partir dos seus dados de nível-base
+### 2. Derive S and compute the aggregates from your bottom-level data
 
-Troque `bottom_data` pelos seus valores reais (mesmas colunas que as séries `is_bottom=True` acima, uma coluna por `series_id`).
+Swap `bottom_data` for your real values (same columns as the `is_bottom=True` series above, one column per `series_id`).
 
 ```python
 from hts_bench.data.hierarchy import build_summing_matrix
@@ -50,27 +50,27 @@ from hts_bench.data.loader import aggregate_from_bottom
 
 S = build_summing_matrix(series_meta)
 
-# bottom_data: suas séries reais, índice de datas, uma coluna por série de nível-base.
+# bottom_data: your real series, date-indexed, one column per bottom-level series.
 full_data = aggregate_from_bottom(S, bottom_data)
 ```
 
-`full_data` já sai com uma coluna por série - nível-base e agregados juntos, exatamente o que `data.csv` espera.
+`full_data` comes out with one column per series - bottom-level and aggregates together, exactly what `data.csv` expects.
 
-### 3. Escreva os três arquivos
+### 3. Write the three files
 
 ```python
 import json
 import os
 
-out_dir = "dataset/meu_dataset"
+out_dir = "dataset/my_dataset"
 os.makedirs(out_dir, exist_ok=True)
 
 full_data.to_csv(os.path.join(out_dir, "data.csv"))
 series_meta.to_csv(os.path.join(out_dir, "series_meta.csv"))
 
 meta = {
-    "name": "meu_dataset",
-    "freq": "D",                                   # ou "MS", conforme sua série
+    "name": "my_dataset",
+    "freq": "D",                                   # or "MS", depending on your series
     "horizon_suggested": 5,
     "n_series": len(series_meta),
     "n_bottom": int(series_meta["is_bottom"].sum()),
@@ -80,39 +80,39 @@ with open(os.path.join(out_dir, "meta.json"), "w") as f:
     json.dump(meta, f, indent=2)
 ```
 
-### 4. Carregue e verifique a coerência
+### 4. Load and check coherence
 
-`check_coherence` confirma que y = S·b realmente vale em todo o `data.csv` escrito - útil tanto aqui quanto para pegar erros de digitação na hierarquia.
+`check_coherence` confirms that y = S·b actually holds across the whole `data.csv` you wrote - useful here and for catching typos in the hierarchy.
 
 ```python
 from hts_bench.data.loader import load_dataset
 from hts_bench.data.coherence import check_coherence
 
-ds = load_dataset("meu_dataset")
+ds = load_dataset("my_dataset")
 violations = check_coherence(ds)
 assert violations.empty, violations
 ```
 
-### 5. Rode um benchmark
+### 5. Run a benchmark
 
 ```python
 from hts_bench.pipeline import run_benchmark
 from hts_bench.method.naive import Naive, SeasonalNaive
 
 result = run_benchmark(
-    "meu_dataset",
+    "my_dataset",
     {"naive": Naive, "seasonal_naive": lambda: SeasonalNaive(seasonal_period=7)},
     horizon=5,
 )
 print(result)
 ```
 
-Ou pelo CLI, sem escrever nenhum código:
+Or through the CLI, without writing any code:
 
 ```bash
-python scripts/run_benchmark.py --dataset meu_dataset --methods naive seasonal_naive --horizon 5
+python scripts/run_benchmark.py --dataset my_dataset --methods naive seasonal_naive --horizon 5
 ```
 
-## Caso sem hierarquia
+## No-hierarchy case
 
-Se você só tem uma série solta, sem agregados, ela é o caso degenerado do mesmo formato: uma única linha em `series_meta.csv`, `is_bottom=True`, sem nenhuma coluna de dimensão, e `n_series == n_bottom == 1`. `data.csv` tem só essa coluna. Nenhum passo de agregação é necessário.
+If you only have a single, standalone series with no aggregates, it's the degenerate case of the same format: a single row in `series_meta.csv`, `is_bottom=True`, no dimension columns at all, and `n_series == n_bottom == 1`. `data.csv` has just that one column. No aggregation step is needed.

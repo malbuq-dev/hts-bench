@@ -1,125 +1,127 @@
 <div align="center">
   <img src="docs/assets/HTSBench-logo-light.svg" alt="HTSBench" width="220" />
-  <p><b>Uma plataforma de Benchmarking para Séries Temporais Hierárquicas</b></p>
+  <p><b>A Benchmarking Platform for Hierarchical Time Series</b></p>
   <p>
     <a href="https://malbuq-dev.github.io/hts-bench/leaderboard.html">HTSBench</a>
   </p>
 </div>
-  
+
+<p align="center">English | <a href="README.pt-br.md">🇧🇷 Português</a></p>
+
 <div align="center">
 
 ![Python](https://img.shields.io/badge/Python-3.12-blue)
 
-![Docker](https://img.shields.io/badge/Docker-pronto-blue)
+![Docker](https://img.shields.io/badge/Docker-ready-blue)
 
-![Testes](https://img.shields.io/badge/pytest-suíte%20automatizada-green)
+![Tests](https://img.shields.io/badge/pytest-automated%20suite-green)
 
 </div>
 
 
-## Sumário
+## Table of contents
 
-1. [Introdução](#introdução)
+1. [Introduction](#introduction)
 
 2. [Datasets](#datasets)
 
-3. [Métodos de previsão](#métodos-de-previsão)
+3. [Forecasting methods](#forecasting-methods)
 
-4. [Reconciliação hierárquica](#reconciliação-hierárquica)
+4. [Hierarchical reconciliation](#hierarchical-reconciliation)
 
-5. [Métricas](#métricas)
+5. [Metrics](#metrics)
 
-6. [Instalação](#instalação)
+6. [Installation](#installation)
 
-7. [Uso rápido](#uso-rápido)
+7. [Quickstart](#quickstart)
 
-8. [Reproduzindo um experimento completo](#reproduzindo-um-experimento-completo)
+8. [Reproducing a full experiment](#reproducing-a-full-experiment)
 
-9. [Preparando os dados](#preparando-os-dados)
+9. [Preparing the data](#preparing-the-data)
 
-10. [Como estender a plataforma](#como-estender-a-plataforma)
+10. [Extending the platform](#extending-the-platform)
 
-11. [Testes](#testes)
+11. [Tests](#tests)
 
-12. [Estrutura do projeto](#estrutura-do-projeto)
+12. [Project structure](#project-structure)
 
-13. [Reconhecimentos](#reconhecimentos)
+13. [Acknowledgments](#acknowledgments)
 
-14. [Contato](#contato)
+14. [Contact](#contact)
 
-## Introdução
+## Introduction
 
-HTSBench avalia, de ponta a ponta, métodos de previsão sobre séries temporais que possuem uma **hierarquia**: séries de nível mais baixo (ex.: vendas por loja) que se somam em séries agregadas (ex.: vendas por estado, vendas totais). A plataforma roda cada método de forma independente por série, aplica uma estratégia de **reconciliação** para tornar o conjunto de previsões coerente com a hierarquia (a soma das partes bater com o todo) e calcula métricas de erro comparáveis entre métodos e datasets.
+HTSBench evaluates, end to end, forecasting methods over time series organized in a **hierarchy**: lower-level series (e.g., sales per store) that sum up into aggregated series (e.g., sales per state, total sales). The platform runs each method independently per series, applies a **reconciliation** strategy to make the full set of forecasts coherent with the hierarchy (the sum of the parts matches the whole), and computes error metrics that are comparable across methods and datasets.
 
-A figura abaixo resume o fluxo: os cinco componentes à esquerda (Dados, Métodos, Reconciliação, Avaliação, Relatórios) e a sequência de execução que eles implementam à direita.
+The figure below summarizes the flow: the five components on the left (Data, Methods, Reconciliation, Evaluation, Reports) and the execution sequence they implement on the right.
 
 <div align="center">
 
-<img alt="Pipeline do HTSBench" src="docs/figures/pipeline.png" width="85%"/>
+<img alt="HTSBench pipeline" src="docs/figures/pipeline.png" width="85%"/>
 
 </div>
 
-Em linhas gerais:
+In broad strokes:
 
-- **Dados** carrega um dataset hierárquico (`dataset/<nome>/`) e deriva a matriz de somação S que descreve a hierarquia a partir de `series_meta.csv` - nenhuma hierarquia é codificada à mão em nenhum outro lugar do código.
+- **Data** loads a hierarchical dataset (`dataset/<name>/`) and derives the summing matrix S that describes the hierarchy from `series_meta.csv` - no hierarchy is hand-coded anywhere else in the codebase.
 
-- **Métodos** implementam uma interface única e univariada (`MethodBase`); cada método é ajustado e previsto série por série, sem nunca enxergar a hierarquia.
+- **Methods** implement a single, univariate interface (`MethodBase`); every method is fit and forecast series by series, never seeing the hierarchy.
 
-- **Reconciliação** recebe as previsões brutas de todas as séries e produz um conjunto coerente com a matriz S (a soma das partes bate com o todo), por uma entre quatro estratégias (`bottom_up`, `top_down`, `min_trace`, `min_trace_shrink`).
+- **Reconciliation** takes the raw forecasts for every series and produces a set coherent with the matrix S (the sum of the parts matches the whole), through one of four strategies (`bottom_up`, `top_down`, `min_trace`, `min_trace_shrink`).
 
-- **Avaliação** orquestra a previsão série a série, aplica a estratégia de reconciliação escolhida e calcula as métricas, com suporte a avaliação de origem única ou de múltiplas origens (**rolling-origin**).
+- **Evaluation** orchestrates forecasting series by series, applies the chosen reconciliation strategy, and computes the metrics, with support for single-origin evaluation or multi-origin evaluation (**rolling-origin**).
 
-- **Relatórios** agrega o resultado por série em uma tabela única por método (um **leaderboard**) e pode persistir tanto o leaderboard quanto a tabela bruta por série para reprocessamento posterior sem reexecutar nenhum modelo.
+- **Reports** aggregates the per-series result into a single table per method (a **leaderboard**) and can persist both the leaderboard and the raw per-series table for later reprocessing without re-running any model.
 
 ## Datasets
 
-| Dataset   | Frequência | Séries (nível base) | Horizonte sugerido | Hierarquia | Fonte |
+| Dataset   | Frequency | Series (bottom level) | Suggested horizon | Hierarchy | Source |
 |-----------|:----------:|:--------------------:|:-------------------:|:----------:|-------|
-| `labour`  | Mensal     | 57 (32)               | 8                    | Cruzada (região × sexo × situação de emprego) | Australian Labour Force, via [Nixtla `datasetsforecast`](https://github.com/Nixtla/datasetsforecast) |
-| `tourism` | Mensal     | 555 (304)              | 24                   | Cruzada (geografia × propósito da viagem) | Australian Tourism (Athanasopoulos et al.), via `datasetsforecast` |
-| `traffic` | Diária     | 207 (200)               | 1                    | Em árvore | San Francisco Traffic, Rangapuram et al., **End-to-End Learning of Coherent Probabilistic Forecasts for Hierarchical Time Series**, ICML 2021 (PMLR 139:8832–8843) |
-| `wiki2`   | Diária     | 199 (150)               | 1                    | Em árvore | Wikipedia page views, mesma fonte do `traffic` acima |
-| `m5`      | Diária     | 9.180 (3.049)¹          | 28                   | Cruzada (estado × loja × categoria × departamento × item) | M5 Forecasting Competition, via `datasetsforecast.m5` (espelho dos arquivos originais do Kaggle, sem necessidade de conta) |
+| `labour`  | Monthly     | 57 (32)               | 8                    | Crossed (region × gender × employment status) | Australian Labour Force, via [Nixtla `datasetsforecast`](https://github.com/Nixtla/datasetsforecast) |
+| `tourism` | Monthly     | 555 (304)              | 24                   | Crossed (geography × travel purpose) | Australian Tourism (Athanasopoulos et al.), via `datasetsforecast` |
+| `traffic` | Daily     | 207 (200)               | 1                    | Tree-structured | San Francisco Traffic, Rangapuram et al., **End-to-End Learning of Coherent Probabilistic Forecasts for Hierarchical Time Series**, ICML 2021 (PMLR 139:8832–8843) |
+| `wiki2`   | Daily     | 199 (150)               | 1                    | Tree-structured | Wikipedia page views, same source as `traffic` above |
+| `m5` (M5_lite) | Daily     | 9,180 (3,049)¹          | 28                   | Crossed (state × store × category × department × item) | M5 Forecasting Competition, via `datasetsforecast.m5` (mirror of the original Kaggle files, no account needed) |
 
-¹ Por padrão `m5` é convertido apenas para a loja `CA_1`, para manter o build rápido; `python scripts/convert_m5.py --store all` reconstrói o dataset completo (~30.490 séries de nível base), usando exatamente o mesmo código.
+¹ By default `m5` is converted for store `CA_1` only - referred to throughout this README as **M5_lite**, to keep it clearly distinct from the full M5 competition dataset - to keep the build fast; `python scripts/convert_m5.py --store all` rebuilds the full M5 dataset (~30,490 bottom-level series), using the exact same code.
 
-Cada dataset é um diretório `dataset/<nome>/` com três arquivos: `data.csv` (uma coluna por série, todas em um único índice de datas), `series_meta.csv` (uma linha por série, com as colunas de dimensão da hierarquia) e `meta.json` (frequência, horizonte sugerido, contagens de séries). Veja [Como estender a plataforma](#como-estender-a-plataforma) para adicionar um novo dataset.
+Each dataset is a `dataset/<name>/` directory with three files: `data.csv` (one column per series, all sharing a single date index), `series_meta.csv` (one row per series, with the hierarchy's dimension columns) and `meta.json` (frequency, suggested horizon, series counts). See [Extending the platform](#extending-the-platform) to add a new dataset.
 
-## Métodos de previsão
+## Forecasting methods
 
-Todo método implementa a interface `MethodBase` (`hts_bench/method/base.py`): univariado, agnóstico à hierarquia - recebe uma série, devolve uma previsão. Reconciliação é responsabilidade do módulo de Reconciliação, não do método.
+Every method implements the `MethodBase` interface (`hts_bench/method/base.py`): univariate, hierarchy-agnostic - it receives a series, returns a forecast. Reconciliation is the Reconciliation module's responsibility, not the method's.
 
-| Método | Descrição | Biblioteca |
+| Method | Description | Library |
 |---|---|---|
-| `naive` | Repete o último valor observado | implementação própria |
-| `seasonal_naive` | Repete o valor do mesmo ponto no ciclo sazonal anterior | implementação própria |
-| `ets` | Suavização exponencial (Exponential Smoothing), com componente sazonal | `statsmodels` |
+| `naive` | Repeats the last observed value | custom implementation |
+| `seasonal_naive` | Repeats the value from the same point in the previous seasonal cycle | custom implementation |
+| `ets` | Exponential smoothing, with a seasonal component | `statsmodels` |
 | `arima` | ARIMA | `statsmodels` |
-| `theta` | Método Theta | `statsmodels` |
-| `lightgbm` | Gradient boosting sobre uma janela de **lags**, por série, com previsão recursiva | `lightgbm` |
+| `theta` | Theta method | `statsmodels` |
+| `lightgbm` | Gradient boosting over a window of **lags**, per series, with recursive forecasting | `lightgbm` |
 
-`lightgbm` é uma variante **local** (um modelo por série) - não o LightGBM "global" (um único modelo treinado sobre todas as séries de um dataset) que venceu a competição M5. Sua semente (`random_state=42`) é fixa por padrão para que reexecutar o mesmo experimento não altere os números reportados.
+`lightgbm` is a **local** variant (one model per series) - not the "global" LightGBM (a single model trained across every series in a dataset) that won the M5 competition. Its seed (`random_state=42`) is fixed by default so that re-running the same experiment doesn't change the reported numbers.
 
-`theta` não implementa `fitted_values()` (o objeto de resultado do `statsmodels` para Theta não expõe valores ajustados in-sample), por isso não pode ser usado como estimador de resíduos para `min_trace_shrink` - os demais métodos podem.
+`theta` doesn't implement `fitted_values()` (statsmodels' Theta result object doesn't expose in-sample fitted values), so it can't be used as a residual estimator for `min_trace_shrink` - the other methods can.
 
-## Reconciliação hierárquica
+## Hierarchical reconciliation
 
-Dado um conjunto de previsões (possivelmente incoerentes entre si), a reconciliação produz um conjunto coerente com a matriz de somação S da hierarquia (y = S·b).
+Given a set of forecasts (possibly incoherent with one another), reconciliation produces a set coherent with the hierarchy's summing matrix S (y = S·b).
 
-| Estratégia | Ideia |
+| Strategy | Idea |
 |---|---|
-| `bottom_up` | Soma as previsões do nível base através de S. Baseline padrão da literatura. |
-| `top_down` | Desagrega o total do topo por proporções históricas médias (Gross & Sohl, 1990). Quando uma previsão independente da série raiz está disponível, ela é usada como o total a desagregar (versão de livro-texto); caso contrário, o total cai de volta para o valor implícito pelo bottom-up. |
-| `min_trace` | MinT (Wickramasuriya, Athanasopoulos & Hyndman, 2019), com peso estrutural (WLSS, baseado no número de séries base que cada nó agrega) por padrão. Exige uma previsão independente para **todo** nível da hierarquia, não só o nível base. |
-| `min_trace_shrink` | MinT(shrink): mesma formulação do `min_trace`, mas com a matriz de covariância estimada por **shrinkage** (Schäfer & Strimmer, 2005) a partir dos resíduos in-sample de um método auxiliar. Não aplicada ao `m5` no **sweep** padrão - a inversão de uma covariância densa (n×n) deixa de ser prática na escala do M5, limitação também presente no artigo original do RHiOTS, que subamostrou M5 pelo mesmo motivo. |
+| `bottom_up` | Sums the bottom-level forecasts through S. The standard baseline in the literature. |
+| `top_down` | Disaggregates the top total by average historical proportions (Gross & Sohl, 1990). When an independent forecast for the root series is available, it's used as the total to disaggregate (textbook version); otherwise, the total falls back to the value implied by bottom-up. |
+| `min_trace` | MinT (Wickramasuriya, Athanasopoulos & Hyndman, 2019), with structural weighting (WLSS, based on the number of bottom series each node aggregates) by default. Requires an independent forecast for **every** level of the hierarchy, not just the bottom level. |
+| `min_trace_shrink` | MinT(shrink): same formulation as `min_trace`, but with the covariance matrix estimated via **shrinkage** (Schäfer & Strimmer, 2005) from the in-sample residuals of an auxiliary method. Not applied to `m5` (M5_lite) in the default **sweep** - inverting a dense (n×n) covariance stops being practical at M5_lite's scale, a limitation also present in the original RHiOTS paper, which subsampled the full M5 dataset for the same reason. |
 
-## Métricas
+## Metrics
 
-`mae`, `rmse` e `mase` (Mean Absolute Scaled Error - erro absoluto médio escalado pelo erro do **naive** sazonal sobre o histórico de treino, o que a torna comparável entre séries de escalas diferentes e é especialmente mais segura que o MAPE em séries com valores zero, como em parte do M5).
+`mae`, `rmse`, and `mase` (Mean Absolute Scaled Error - mean absolute error scaled by the error of the seasonal **naive** method over the training history, which makes it comparable across series of different scales and is notably safer than MAPE on series with zero values, as in part of M5_lite).
 
-## Instalação
+## Installation
 
-Dependências com versões fixas para reprodutibilidade (veja `requirements.txt`).
+Dependencies pinned to fixed versions for reproducibility (see `requirements.txt`).
 
 ```bash
 pip install -r requirements-dev.txt
@@ -133,9 +135,9 @@ docker run --rm -v "$(pwd)/result:/app/result" hts-bench:latest \
   --dataset labour --methods naive seasonal_naive --horizon 8 --records-dir result
 ```
 
-A imagem roda a suíte de testes completa como parte do build - se algum teste falhar, a imagem não é construída. O `ENTRYPOINT` é o próprio `scripts/run_benchmark.py`, então qualquer argumento passado ao `docker run` depois do nome da imagem vai direto para o CLI.
+The image runs the full test suite as part of the build - if any test fails, the image isn't built. The `ENTRYPOINT` is `scripts/run_benchmark.py` itself, so any argument passed to `docker run` after the image name goes straight to the CLI.
 
-## Uso rápido
+## Quickstart
 
 ```bash
 python scripts/run_benchmark.py \
@@ -145,7 +147,7 @@ python scripts/run_benchmark.py \
   --reconcile bottom_up
 ```
 
-Para avaliação com múltiplas origens (mais robusta que uma única divisão treino/teste):
+For multi-origin evaluation (more robust than a single train/test split):
 
 ```bash
 python scripts/run_benchmark.py \
@@ -153,82 +155,82 @@ python scripts/run_benchmark.py \
   --horizon 8 --n-origins 5 --reconcile min_trace --by-level
 ```
 
-`--reconcile min_trace` implica previsão independente em todo nível da hierarquia automaticamente (o CLI cuida disso); `--by-level` quebra o leaderboard por nível hierárquico em vez de colapsar tudo em uma única linha por método.
+`--reconcile min_trace` automatically implies independent forecasting at every level of the hierarchy (the CLI handles this); `--by-level` breaks the leaderboard down by hierarchy level instead of collapsing everything into a single row per method.
 
-## Reproduzindo um experimento completo
+## Reproducing a full experiment
 
-`scripts/run_experiments.py` varre todos os datasets, métodos e estratégias de reconciliação relevantes (pulando `min_trace_shrink` para `m5`, pelo motivo já descrito), salvando a tabela bruta por série de cada execução em `result/`:
+`scripts/run_experiments.py` sweeps every relevant dataset, method, and reconciliation strategy combination (skipping `min_trace_shrink` for `m5`, for the reason already described), saving the raw per-series table for each run to `result/`:
 
 ```bash
 python scripts/run_experiments.py
 ```
 
-`scripts/analyze_experiments.py` então lê tudo que foi salvo em `result/` - sem reajustar nenhum modelo - e produz as visões de comparação usadas na análise de resultados: método × dataset, comparação entre estratégias de reconciliação, benefício da reconciliação por profundidade na hierarquia, e agrupamento por tipo de hierarquia (cruzada vs. em árvore):
+`scripts/analyze_experiments.py` then reads everything saved under `result/` - without refitting any model - and produces the comparison views used in the results analysis: method × dataset, comparison between reconciliation strategies, reconciliation benefit by hierarchy depth, and grouping by hierarchy type (crossed vs. tree-structured):
 
 ```bash
 python scripts/analyze_experiments.py
 ```
 
-`notebooks/hierarchy_playground.ipynb` é um notebook de apoio para manipular a matriz de somação S manualmente em um exemplo pequeno, útil para construir intuição sobre bottom-up/top-down/MinT antes de olhar para o código de produção.
+`notebooks/hierarchy_playground.ipynb` is a supporting notebook for manipulating the summing matrix S by hand on a small example, useful for building intuition about bottom-up/top-down/MinT before looking at the production code.
 
-## Preparando os dados
+## Preparing the data
 
-Os datasets já convertidos estão em `dataset/`; os scripts abaixo regeneram cada um a partir da fonte original, caso seja necessário:
+The already-converted datasets live in `dataset/`; the scripts below regenerate each one from its original source, if needed:
 
 ```bash
 python scripts/convert_labour.py
 python scripts/convert_tourism.py
 python scripts/convert_traffic.py
 python scripts/convert_wiki2.py
-python scripts/convert_m5.py            # loja CA_1 apenas (padrão)
-python scripts/convert_m5.py --store all  # dataset M5 completo
+python scripts/convert_m5.py            # CA_1 store only (M5_lite, default)
+python scripts/convert_m5.py --store all  # full M5 dataset
 ```
 
-## Como estender a plataforma
+## Extending the platform
 
-**Novo método**: implemente `MethodBase` (`hts_bench/method/base.py`) - `forecast_fit`, `forecast`, a propriedade `name` e, opcionalmente, `fitted_values()` (necessário apenas se o método for usado para estimar resíduos em `min_trace_shrink`). Tutorial completo, com um método real construído passo a passo: [docs/tutorials/steps_to_develop_your_own_method.md](docs/tutorials/steps_to_develop_your_own_method.md).
+**New method**: implement `MethodBase` (`hts_bench/method/base.py`) - `forecast_fit`, `forecast`, the `name` property, and, optionally, `fitted_values()` (only needed if the method is used to estimate residuals for `min_trace_shrink`). Full tutorial, building a real method step by step: [docs/tutorials/steps_to_develop_your_own_method.md](docs/tutorials/steps_to_develop_your_own_method.md) ([pt-br](docs/tutorials/steps_to_develop_your_own_method.pt-br.md)).
 
-**Novo dataset**: crie `dataset/<nome>/` com:
+**New dataset**: create `dataset/<name>/` with:
 
-- `data.csv` - índice `date`, uma coluna por série (todos os níveis, incluindo agregados);
+- `data.csv` - `date` index, one column per series (every level, including aggregates);
 
-- `series_meta.csv` - índice `series_id`, colunas `level`, `is_bottom` e uma coluna por dimensão da hierarquia (uma série de nível agregado deixa `NaN` nas dimensões que ela não especifica);
+- `series_meta.csv` - `series_id` index, columns `level`, `is_bottom`, and one column per hierarchy dimension (an aggregate-level series leaves `NaN` in the dimensions it doesn't specify);
 
 - `meta.json` - `name`, `freq`, `horizon_suggested`, `n_series`, `n_bottom`, `data_files`.
 
-Tutorial completo, incluindo como derivar os agregados automaticamente a partir de dados de nível-base: [docs/tutorials/steps_to_evaluate_your_own_time_series.md](docs/tutorials/steps_to_evaluate_your_own_time_series.md).
+Full tutorial, including how to derive aggregates automatically from bottom-level data: [docs/tutorials/steps_to_evaluate_your_own_time_series.md](docs/tutorials/steps_to_evaluate_your_own_time_series.md) ([pt-br](docs/tutorials/steps_to_evaluate_your_own_time_series.pt-br.md)).
 
-## Testes
+## Tests
 
 ```bash
 pytest tests/ -q
 ```
 
-Cobre dados (carregamento, matriz de somação, verificação de coerência), métodos (incluindo um teste de integração ponta a ponta por método), reconciliação (incluindo coerência numérica em datasets reais), e o módulo de relatórios (persistência e **leaderboard**). Testes dependentes do M5 completo pulam automaticamente quando apenas o subconjunto padrão está disponível.
+Covers data (loading, summing matrix, coherence checking), methods (including an end-to-end integration test per method), reconciliation (including numerical coherence on real datasets), and the reports module (persistence and **leaderboard**). Tests that depend on the full M5 dataset skip automatically when only the default subset is available.
 
-## Estrutura do projeto
+## Project structure
 
 ```
 hts_bench/
-  data/           # carregamento de dataset, matriz de somação S, checagem de coerência
-  method/         # interface MethodBase + adaptadores (naive, statsmodels, lightgbm)
-  reconciliation/ # estratégias de reconciliação hierárquica (bottom_up, top_down, min_trace, min_trace_shrink)
-  evaluation/     # execução de previsão, aplicação da reconciliação, métricas, comparação entre métodos
-  report/         # persistência de resultados brutos e agregação em leaderboard
-  pipeline.py     # liga os cinco módulos acima em uma única chamada
+  data/           # dataset loading, summing matrix S, coherence checking
+  method/         # MethodBase interface + adapters (naive, statsmodels, lightgbm)
+  reconciliation/ # hierarchical reconciliation strategies (bottom_up, top_down, min_trace, min_trace_shrink)
+  evaluation/     # forecast execution, reconciliation application, metrics, method comparison
+  report/         # raw result persistence and leaderboard aggregation
+  pipeline.py     # ties the five modules above into a single call
 scripts/
-  convert_*.py            # conversão de cada dataset para o formato do projeto
-  run_benchmark.py         # CLI para uma execução pontual
-  run_experiments.py       # varredura completa de datasets × métodos × reconciliações
-  analyze_experiments.py   # leitura e análise dos resultados salvos, sem reexecutar modelos
-dataset/    # datasets já convertidos (Labour, Tourism, Traffic, Wiki2, M5)
-tests/      # suíte de testes automatizados
-notebooks/  # material de apoio para construir intuição sobre a hierarquia
+  convert_*.py            # conversion of each dataset into the project's format
+  run_benchmark.py         # CLI for a single run
+  run_experiments.py       # full sweep over datasets × methods × reconciliations
+  analyze_experiments.py   # reading and analyzing saved results, without re-running models
+dataset/    # already-converted datasets (Labour, Tourism, Traffic, Wiki2, M5_lite)
+tests/      # automated test suite
+notebooks/  # supporting material for building intuition about the hierarchy
 ```
 
-## Reconhecimentos
+## Acknowledgments
 
-A separação em módulos (Dados, Métodos, Reconciliação, Avaliação, Relatórios), a interface padronizada de método e o padrão de persistência de resultados brutos para reprocessamento posterior foram inspirados no [TFB](https://github.com/decisionintelligence/TFB):
+The split into modules (Data, Methods, Reconciliation, Evaluation, Reports), the standardized method interface, and the pattern of persisting raw results for later reprocessing were inspired by [TFB](https://github.com/decisionintelligence/TFB):
 
 ```
 @article{qiu2024tfb,
@@ -242,7 +244,7 @@ A separação em módulos (Dados, Métodos, Reconciliação, Avaliação, Relat�
 }
 ```
 
-Os datasets `traffic` e `wiki2`, e a convenção de horizonte=1 usada para ambos, vêm de:
+The `traffic` and `wiki2` datasets, and the horizon=1 convention used for both, come from:
 
 ```
 @inproceedings{rangapuram2021end,
@@ -256,8 +258,8 @@ Os datasets `traffic` e `wiki2`, e a convenção de horizonte=1 usada para ambos
 }
 ```
 
-A reconciliação `min_trace`/`min_trace_shrink` segue Wickramasuriya, Athanasopoulos & Hyndman (2019), **Optimal Forecast Reconciliation for Hierarchical and Grouped Time Series Through Trace Minimization**, JASA.
+`min_trace`/`min_trace_shrink` reconciliation follows Wickramasuriya, Athanasopoulos & Hyndman (2019), **Optimal Forecast Reconciliation for Hierarchical and Grouped Time Series Through Trace Minimization**, JASA.
 
-## Contato
+## Contact
 
-Dúvidas, sugestões ou problemas: abra uma [issue](https://github.com/malbuq-dev/hts-bench/issues) neste repositório.
+Questions, suggestions, or issues: open an [issue](https://github.com/malbuq-dev/hts-bench/issues) in this repository.

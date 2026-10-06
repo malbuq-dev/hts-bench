@@ -1,14 +1,14 @@
-# Como desenvolver seu próprio método
+# Steps to develop your own method
 
-Todo método do HTSBench implementa `MethodBase` (`hts_bench/method/base.py`): uma interface univariada e agnóstica à hierarquia - recebe uma série, devolve uma previsão. O método nunca enxerga a hierarquia nem a matriz de somação S; isso é responsabilidade do módulo de Reconciliação, aplicado depois, sobre as previsões já geradas.
+Every HTSBench method implements `MethodBase` (`hts_bench/method/base.py`): a univariate, hierarchy-agnostic interface - it receives a series, returns a forecast. The method never sees the hierarchy or the summing matrix S; that's the Reconciliation module's responsibility, applied afterward, over the forecasts already generated.
 
-Este tutorial usa como exemplo o método **Drift**: uma extrapolação linear simples entre o primeiro e o último ponto do treino (o mesmo método "Drift" de Hyndman & Athanasopoulos, da mesma família de `naive`/`seasonal_naive`). O código abaixo foi testado e roda de ponta a ponta.
+This tutorial uses the **Drift** method as an example: a simple linear extrapolation between the first and last point of the training data (the same "Drift" method from Hyndman & Athanasopoulos, in the same family as `naive`/`seasonal_naive`). The code below was tested and runs end to end.
 
-## 1. Crie um arquivo para o seu método
+## 1. Create a file for your method
 
-Não precisa viver dentro de `hts_bench/`; qualquer módulo Python importável serve, já que `method_factories` (o dicionário passado para `compare_methods`/`run_benchmark`) aceita qualquer `Callable[[], MethodBase]`. Para este tutorial, crie `drift.py` em qualquer lugar do seu projeto.
+It doesn't need to live inside `hts_bench/`; any importable Python module works, since `method_factories` (the dictionary passed to `compare_methods`/`run_benchmark`) accepts any `Callable[[], MethodBase]`. For this tutorial, create `drift.py` anywhere in your project.
 
-## 2. Herde de `MethodBase`
+## 2. Inherit from `MethodBase`
 
 ```python
 import numpy as np
@@ -23,9 +23,9 @@ class Drift(MethodBase):
         self._slope = None
 ```
 
-## 3. Implemente `forecast_fit`
+## 3. Implement `forecast_fit`
 
-Recebe a série de treino (um `pd.Series`, já recortada para excluir o horizonte de teste) e deve retornar `self`.
+Receives the training series (a `pd.Series`, already sliced to exclude the test horizon) and must return `self`.
 
 ```python
     def forecast_fit(self, train_data: pd.Series) -> "Drift":
@@ -35,9 +35,9 @@ Recebe a série de treino (um `pd.Series`, já recortada para excluir o horizont
         return self
 ```
 
-## 4. Implemente `forecast`
+## 4. Implement `forecast`
 
-Recebe o horizonte desejado e a mesma série usada em `forecast_fit` (passada de novo explicitamente, para métodos que precisem dela diretamente, como os de janela de lag) e deve retornar um array 1-D de tamanho `horizon`.
+Receives the desired horizon and the same series used in `forecast_fit` (passed again explicitly, for methods that need it directly, such as lag-window ones) and must return a 1-D array of size `horizon`.
 
 ```python
     def forecast(self, horizon: int, series: pd.Series) -> np.ndarray:
@@ -45,7 +45,7 @@ Recebe o horizonte desejado e a mesma série usada em `forecast_fit` (passada de
         return self._last_value + self._slope * steps
 ```
 
-## 5. Implemente a propriedade `name`
+## 5. Implement the `name` property
 
 ```python
     @property
@@ -53,9 +53,9 @@ Recebe o horizonte desejado e a mesma série usada em `forecast_fit` (passada de
         return "Drift"
 ```
 
-## 6. (Opcional) Implemente `fitted_values`
+## 6. (Optional) Implement `fitted_values`
 
-Só é necessário se o método for usado para estimar resíduos em `min_trace_shrink` (veja `reconciliation/reconcile.py`'s `shrinkage_covariance`). Se omitido, `MethodBase`'s implementação padrão levanta `NotImplementedError` - correto para um método que, como o Theta do `statsmodels`, não tem um conceito natural de valor ajustado in-sample. O Drift tem: a reta ajustada em cada ponto do treino.
+Only needed if the method is used to estimate residuals for `min_trace_shrink` (see `shrinkage_covariance` in `reconciliation/reconcile.py`). If omitted, `MethodBase`'s default implementation raises `NotImplementedError` - correct for a method that, like `statsmodels`' Theta, has no natural concept of an in-sample fitted value. Drift does have one: the fitted line at each training point.
 
 ```python
     def fitted_values(self) -> pd.Series:
@@ -64,9 +64,9 @@ Só é necessário se o método for usado para estimar resíduos em `min_trace_s
         return pd.Series(self._train_data.iloc[0] + self._slope * steps, index=self._train_data.index)
 ```
 
-(Isso exige guardar `train_data` em `forecast_fit` - `self._train_data = train_data` - omitido acima por simplicidade; veja `hts_bench/method/naive.py` para o padrão completo com `fitted_values`.)
+(This requires storing `train_data` in `forecast_fit` - `self._train_data = train_data` - omitted above for simplicity; see `hts_bench/method/naive.py` for the full pattern with `fitted_values`.)
 
-## Juntando tudo
+## Putting it all together
 
 ```python
 import numpy as np
@@ -95,9 +95,9 @@ class Drift(MethodBase):
         return "Drift"
 ```
 
-## 7. Use o método
+## 7. Use the method
 
-Não existe um CLI genérico controlado por configuração - `method_factories` é só um dicionário Python `{nome: fábrica}`, usado diretamente na API:
+There's no generic, configuration-driven CLI for this - `method_factories` is just a Python dictionary `{name: factory}`, used directly through the API:
 
 ```python
 from hts_bench.pipeline import run_benchmark
@@ -112,7 +112,7 @@ result = run_benchmark(
 print(result)
 ```
 
-Saída real, obtida rodando este exato código:
+Real output, obtained by running this exact code:
 
 ```
              mae       rmse      mase
@@ -121,4 +121,4 @@ drift    9.207740  10.871704  1.561329
 naive   11.475307  13.525983  1.764651
 ```
 
-Para usar seu método a partir do CLI (`scripts/run_benchmark.py --methods ...`), adicione-o ao dicionário `registry` dentro de `build_method_factories` nesse script - o CLI só reconhece os nomes já cadastrados ali (`naive`, `seasonal_naive`, `ets`, `arima`, `theta`, `lightgbm`).
+To use your method from the CLI (`scripts/run_benchmark.py --methods ...`), add it to the `registry` dictionary inside `build_method_factories` in that script - the CLI only recognizes names already registered there (`naive`, `seasonal_naive`, `ets`, `arima`, `theta`, `lightgbm`).
