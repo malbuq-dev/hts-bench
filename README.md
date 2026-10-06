@@ -171,8 +171,6 @@ python scripts/run_experiments.py
 python scripts/analyze_experiments.py
 ```
 
-`notebooks/hierarchy_playground.ipynb` is a supporting notebook for manipulating the summing matrix S by hand on a small example, useful for building intuition about bottom-up/top-down/MinT before looking at the production code.
-
 ## Preparing the data
 
 The already-converted datasets live in `dataset/`; the scripts below regenerate each one from its original source, if needed:
@@ -225,7 +223,6 @@ scripts/
   analyze_experiments.py   # reading and analyzing saved results, without re-running models
 dataset/    # already-converted datasets (Labour, Tourism, Traffic, Wiki2, M5_lite)
 tests/      # automated test suite
-notebooks/  # supporting material for building intuition about the hierarchy
 ```
 
 ## Acknowledgments

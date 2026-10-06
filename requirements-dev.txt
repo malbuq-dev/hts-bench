@@ -1,6 +1,5 @@
 -r requirements.txt
 pytest==9.1.1
-ipykernel==7.4.0
 # Only used by scripts/convert_*.py (Labour/Tourism/Traffic/Wiki2/M5 conversion)
 # and their tests - never a runtime dependency of hts_bench itself. The reason
 # requirements.txt pins pandas<3.0 (==2.3.3) instead of a newer 3.x release:
