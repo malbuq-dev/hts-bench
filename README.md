@@ -188,7 +188,7 @@ python scripts/convert_m5.py --store all  # full M5 dataset
 
 ## Extending the platform
 
-**New method**: implement `MethodBase` (`hts_bench/method/base.py`) - `forecast_fit`, `forecast`, the `name` property, and, optionally, `fitted_values()` (only needed if the method is used to estimate residuals for `min_trace_shrink`). Full tutorial, building a real method step by step: [docs/tutorials/steps_to_develop_your_own_method.md](docs/tutorials/steps_to_develop_your_own_method.md) ([pt-br](docs/tutorials/steps_to_develop_your_own_method.pt-br.md)).
+**New method**: implement `MethodBase` (`hts_bench/method/base.py`) - `forecast_fit`, `forecast`, the `name` property, and, optionally, `fitted_values()` (only needed if the method is used to estimate residuals for `min_trace_shrink`). Full tutorial, building a real method step by step: [docs/tutorials/steps_to_develop_your_own_method.md](docs/tutorials/steps_to_develop_your_own_method.md).
 
 **New dataset**: create `dataset/<name>/` with:
 
@@ -198,7 +198,7 @@ python scripts/convert_m5.py --store all  # full M5 dataset
 
 - `meta.json` - `name`, `freq`, `horizon_suggested`, `n_series`, `n_bottom`, `data_files`.
 
-Full tutorial, including how to derive aggregates automatically from bottom-level data: [docs/tutorials/steps_to_evaluate_your_own_time_series.md](docs/tutorials/steps_to_evaluate_your_own_time_series.md) ([pt-br](docs/tutorials/steps_to_evaluate_your_own_time_series.pt-br.md)).
+Full tutorial, including how to derive aggregates automatically from bottom-level data: [docs/tutorials/steps_to_evaluate_your_own_time_series.md](docs/tutorials/steps_to_evaluate_your_own_time_series.md).
 
 ## Tests
 
