@@ -37,17 +37,19 @@
 
 8. [Reproduzindo um experimento completo](#reproduzindo-um-experimento-completo)
 
-9. [Preparando os dados](#preparando-os-dados)
+9. [Atualizando o leaderboard](#atualizando-o-leaderboard)
 
-10. [Como estender a plataforma](#como-estender-a-plataforma)
+10. [Preparando os dados](#preparando-os-dados)
 
-11. [Testes](#testes)
+11. [Como estender a plataforma](#como-estender-a-plataforma)
 
-12. [Estrutura do projeto](#estrutura-do-projeto)
+12. [Testes](#testes)
 
-13. [Reconhecimentos](#reconhecimentos)
+13. [Estrutura do projeto](#estrutura-do-projeto)
 
-14. [Contato](#contato)
+14. [Reconhecimentos](#reconhecimentos)
+
+15. [Contato](#contato)
 
 ## Introdução
 
@@ -170,6 +172,18 @@ python scripts/run_experiments.py
 ```bash
 python scripts/analyze_experiments.py
 ```
+
+## Atualizando o leaderboard
+
+A [página do leaderboard](https://malbuq-dev.github.io/hts-bench/leaderboard.html) (`docs/leaderboard.html`) não lê `result/` diretamente - ela busca um `docs/data/leaderboard.json` pré-agregado, construído por uma etapa de exportação separada:
+
+```bash
+python scripts/export_leaderboard_json.py
+```
+
+Esse script lê tudo que está em `result/` (da mesma forma que `analyze_experiments.py`, sem reajustar nenhum modelo) e sobrescreve `docs/data/leaderboard.json` com uma linha agregada por combinação de `(dataset, reconcile, method)`. Após o commit e o push do JSON atualizado, a página ao vivo reflete os novos dados automaticamente no próximo carregamento - `docs/leaderboard.html` busca o arquivo diretamente no navegador, e o GitHub Pages serve o conteúdo direto da pasta `/docs` na branch `main`, sem nenhuma etapa adicional de build ou deploy.
+
+Um detalhe importante caso você adicione um novo dataset ou uma nova estratégia de reconciliação: `scripts/export_leaderboard_json.py` tem os datasets e as estratégias de reconciliação que procura fixados no início do arquivo (`DATASETS`, `RECONCILE_CHOICES`). Um novo item não aparece na exportação até ser adicionado também a essas duas listas, mesmo que `result/` já tenha os dados correspondentes.
 
 ## Preparando os dados
 

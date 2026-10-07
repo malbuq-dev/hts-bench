@@ -37,17 +37,19 @@
 
 8. [Reproducing a full experiment](#reproducing-a-full-experiment)
 
-9. [Preparing the data](#preparing-the-data)
+9. [Updating the leaderboard](#updating-the-leaderboard)
 
-10. [Extending the platform](#extending-the-platform)
+10. [Preparing the data](#preparing-the-data)
 
-11. [Tests](#tests)
+11. [Extending the platform](#extending-the-platform)
 
-12. [Project structure](#project-structure)
+12. [Tests](#tests)
 
-13. [Acknowledgments](#acknowledgments)
+13. [Project structure](#project-structure)
 
-14. [Contact](#contact)
+14. [Acknowledgments](#acknowledgments)
+
+15. [Contact](#contact)
 
 ## Introduction
 
@@ -170,6 +172,18 @@ python scripts/run_experiments.py
 ```bash
 python scripts/analyze_experiments.py
 ```
+
+## Updating the leaderboard
+
+The [live leaderboard page](https://malbuq-dev.github.io/hts-bench/leaderboard.html) (`docs/leaderboard.html`) doesn't read `result/` directly - it fetches a pre-aggregated `docs/data/leaderboard.json`, built by a separate export step:
+
+```bash
+python scripts/export_leaderboard_json.py
+```
+
+This reads everything under `result/` (same as `analyze_experiments.py`, without refitting any model) and overwrites `docs/data/leaderboard.json` with one aggregated row per `(dataset, reconcile, method)`. Commit and push the updated JSON and the live page picks it up automatically on the next load - `docs/leaderboard.html` fetches it client-side, and GitHub Pages serves straight from the `/docs` folder on `main`, so there's no separate build or deploy step.
+
+One thing to know if you've added a new dataset or reconciliation strategy: `scripts/export_leaderboard_json.py` has the datasets and reconciliation strategies it looks for hardcoded at the top of the file (`DATASETS`, `RECONCILE_CHOICES`). A new one won't show up in the export until it's added to those two lists too, even if `result/` already has the data for it.
 
 ## Preparing the data
 
