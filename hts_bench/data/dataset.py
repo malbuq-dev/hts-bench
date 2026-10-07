@@ -11,11 +11,6 @@ class HierarchicalDataset:
     """
     In-memory representation of a hierarchical/grouped time series dataset.
 
-    data:        DatetimeIndex, one column per series (all levels, incl. aggregates).
-    series_meta: index = series_id, columns = level, is_bottom, + dataset-specific
-                 dimension columns (e.g. region, gender, employment for Labour).
-                 The single source of truth for hierarchy structure - S is derived
-                 from it on demand rather than stored separately (see hierarchy.py).
     """
 
     name: str

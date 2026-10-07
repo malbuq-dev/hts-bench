@@ -17,8 +17,6 @@ def _load_data(dataset_dir: str, data_files: list) -> pd.DataFrame:
     if len(paths) == 1:
         shards = [_read_shard(paths[0])]
     else:
-        # Multiple shard files: read concurrently, same pattern TFB uses in
-        # LocalDataSource.load_series_list (ts_benchmark/data/data_source.py).
         with ThreadPoolExecutor(max_workers=len(paths)) as pool:
             shards = list(pool.map(_read_shard, paths))
     data = pd.concat(shards, axis=1).sort_index()
@@ -63,9 +61,7 @@ def aggregate_from_bottom(summing_matrix: SummingMatrix, bottom_data: pd.DataFra
     """
     Derive every series in the hierarchy from bottom-level data: y_t = S @ b_t.
 
-    Sparse matmul so it scales to hierarchies like M5's (S far too large to be
-    dense). A single vectorized call either way - not something to hand-parallelize.
     """
-    B = bottom_data[summing_matrix.col_ids].to_numpy()  # (T, m)
-    Y = summing_matrix.matrix.dot(B.T).T  # (n, m) @ (m, T) -> (n, T) -> (T, n)
+    B = bottom_data[summing_matrix.col_ids].to_numpy()
+    Y = summing_matrix.matrix.dot(B.T).T 
     return pd.DataFrame(Y, index=bottom_data.index, columns=summing_matrix.row_ids)

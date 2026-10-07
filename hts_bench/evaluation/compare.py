@@ -19,27 +19,8 @@ def compare_methods(
 ) -> pd.DataFrame:
     """
     Runs every method in `method_factories` through run_forecast -> evaluate and
-    stacks the results into one table indexed by (method, series_id) - mirrors
-    TFB's eval_model looping over models to build one combined result_df
-    (ts_benchmark/evaluation/evaluate_model.py), minus the ParallelBackend/
-    ModelFactory scheduling machinery: evaluate()'s docstring already made this
-    call for the single-method case, same reasoning applies looping over methods.
+    stacks the results into one table indexed by (method, series_id)
 
-    `reconcile_fn` is shared across all methods (not per-method) - reconciliation
-    is a property of how you choose to combine a hierarchy's forecasts, not of
-    any one method, so comparing methods under a fixed reconciliation choice is
-    the meaningful comparison; to compare reconciliation choices instead, call
-    this once per reconcile_fn and compare the resulting tables.
-
-    series_ids is forwarded to run_forecast (default: bottom-only). Pass
-    ds.summing_matrix.row_ids when `reconcile_fn` is min_trace/min_trace_shrink
-    - those need every level forecast independently, not just the bottom (see
-    min_trace's docstring); bottom_up/top_down only ever need the default.
-
-    run_forecast's per-series timings are always forwarded to evaluate(), so
-    the result always has a time_seconds column (NaN for any series that
-    wasn't independently fit - see evaluate()'s docstring) - include it in
-    `metric_names` at the leaderboard/report stage to see it aggregated.
     """
     reconcile_fn = reconcile_fn or bottom_up
     results = []
@@ -68,10 +49,8 @@ def compare_methods_rolling(
     """
     compare_methods's rolling-origin counterpart: runs every method through
     evaluate_rolling instead of evaluate, and stacks the results into one table
-    indexed by (method, origin, series_id) - see evaluate_rolling's docstring
-    for why a single fixed split isn't enough on its own.
+    indexed by (method, origin, series_id)
 
-    series_ids: see compare_methods - same forwarding, same reason.
     """
     reconcile_fn = reconcile_fn or bottom_up
     results = []

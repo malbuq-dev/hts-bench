@@ -20,10 +20,6 @@ def build_summing_matrix(series_meta: pd.DataFrame) -> SummingMatrix:
     """
     Derive S purely from series_meta - no separate stored matrix needed.
 
-    An aggregate row's bottom-level members are exactly the bottom rows that match
-    it on every dimension column the aggregate's level actually specifies (a level's
-    unspecified dimensions are NaN for every row at that level, so this reduces to a
-    per-level merge on that level's non-null columns).
     """
     dim_cols = [c for c in series_meta.columns if c not in ("level", "is_bottom")]
     series_meta = series_meta.rename_axis("series_id")
@@ -39,7 +35,6 @@ def build_summing_matrix(series_meta: pd.DataFrame) -> SummingMatrix:
         defining_cols = [c for c in dim_cols if level_rows[c].notna().any()]
 
         if not defining_cols:
-            # Root level (e.g. "Total"): every bottom series is a member.
             for agg_id in level_rows.index:
                 for bottom_id in col_ids:
                     rows.append(row_pos[agg_id])

@@ -11,18 +11,6 @@ class LGBMAdapter(MethodBase):
     """
     Per-series LightGBM on lag features, forecasting recursively.
 
-    Not the "global" LightGBM that won M5 - that trains one model jointly
-    across every series in a dataset. MethodBase.forecast_fit only ever sees
-    one series (runner.run_forecast calls method_factory per series_id), so
-    this is a local variant: one LGBMRegressor per series, same as the ARIMA/
-    ETS/Theta adapters. A true global model needs a different entry point that
-    fits once across ds.get_bottom_data() - future work, not this class.
-
-    random_state defaults to a fixed seed rather than LightGBM's own default
-    (unseeded, genuinely random tree-building) - every other method here is
-    deterministic given its inputs, so leaving this one non-reproducible would
-    mean re-running the same command could silently change reported numbers.
-    Pass a different value (or None, LightGBM's default) explicitly to opt out.
     """
 
     def __init__(self, n_lags: int = 12, random_state: int = 42, **lgbm_kwargs):
